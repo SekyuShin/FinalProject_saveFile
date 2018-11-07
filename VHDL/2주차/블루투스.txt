@@ -5,3 +5,6 @@ https://blog.naver.com/nkkh159/220872249304
 
 블루투스 종류
 hc-05
+
+http://www.hardcopyworld.com/ngine/aduino/index.php/archives/2101
+//블루투스 동작원리
