@@ -8,3 +8,6 @@ hc-05
 
 http://www.hardcopyworld.com/ngine/aduino/index.php/archives/2101
 //블루투스 동작원리
+
+https://blog.naver.com/immai/220593384438
+블루투스 - 라즈베리파이
