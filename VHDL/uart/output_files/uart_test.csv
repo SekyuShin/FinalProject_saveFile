@@ -1,0 +1,35 @@
+# Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
+# Your use of Altera Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Altera Program License 
+# Subscription Agreement, the Altera Quartus Prime License Agreement,
+# the Altera MegaCore Function License Agreement, or other 
+# applicable license agreement, including, without limitation, 
+# that your use is for the sole purpose of programming logic 
+# devices manufactured by Altera and sold by Altera or its 
+# authorized distributors.  Please refer to the applicable 
+# agreement for further details.
+
+# Quartus Prime Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
+# File: D:\MyProject\uart\output_files\uart_test.csv
+# Generated on: Tue Nov 20 15:18:56 2018
+
+# Note: The column header names should not be changed if you wish to import this .csv file into the Quartus Prime software.
+
+To,Direction,Location,I/O Bank,VREF Group,Fitter Location,I/O Standard,Reserved,Current Strength,Slew Rate,Differential Pair,Strict Preservation
+clk_50m,Input,PIN_AB11,3,B3_N0,PIN_AB11,2.5 V,,,,,
+rcv_data[7],Output,PIN_K7,1,B1_N2,PIN_K7,2.5 V,,,,,
+rcv_data[6],Output,PIN_M8,2,B2_N1,PIN_M8,2.5 V,,,,,
+rcv_data[5],Output,PIN_N8,2,B2_N2,PIN_N8,2.5 V,,,,,
+rcv_data[4],Output,PIN_N6,2,B2_N1,PIN_N6,2.5 V,,,,,
+rcv_data[3],Output,PIN_L8,1,B1_N2,PIN_L8,2.5 V,,,,,
+rcv_data[2],Output,PIN_M7,2,B2_N1,PIN_M7,2.5 V,,,,,
+rcv_data[1],Output,PIN_N7,2,B2_N2,PIN_N7,2.5 V,,,,,
+rcv_data[0],Output,PIN_P7,2,B2_N2,PIN_P7,2.5 V,,,,,
+resetn,Input,PIN_E4,1,B1_N0,PIN_E4,2.5 V,,,,,
+rx,Input,PIN_B4,8,B8_N3,PIN_C7,2.5 V,,,,,
+send_req,Input,PIN_J4,1,B1_N3,PIN_J4,2.5 V,,,,,
+tx,Output,PIN_B3,8,B8_N3,PIN_C6,2.5 V,,,,,
