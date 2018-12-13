@@ -1,0 +1,1 @@
+http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getCtprvnMesureSidoLIst?ServiceKey=iXV4vLvb8wkopH3ekhwxmhhcI0033T3I3aciC7tz%2FYH9K0G0xmDsoGL7zO%2FQHyQ0Del7YotVrbI7p2ndjgZH4w%3D%3D&numOfRows=10&pageNo=1&sidoName=%ec%84%9c%ec%9a%b8&searchCondition=DAILY

@@ -1,0 +1,23 @@
+var start= msg.payload.split("todaytemp\">")[1];
+var end = start.split("</span>")[0];
+var temp = end;
+
+start= msg.payload.split("cast_txt\">")[1];
+end = start.split("</p>")[0];
+var cast_txt = end;
+
+start= msg.payload.split("num\">")[1];
+end = start.split("</span>")[0];
+var min = end;
+
+start= msg.payload.split("num\">")[2];
+end = start.split("</span>")[0];
+var max = end;
+
+
+
+msg.payload =   "현재온도 : "+temp+"\n"+
+                "날씨비교 : "+cast_txt+"\n"+
+                "최저온도 : "+min+"\n"+
+                "최고온도 : "+max+"\n";
+return msg;
