@@ -149,10 +149,16 @@ function weatherRequest(dataUrl,date,time) {
     });
   })
 }
+function sendMaker() {
+  var str = (pop.fcstTime+','+pop.fcstValue+'/'+tmx.fcstValue+'/'+tmn.fcstValue+'/'+pty.fcstValue+'/'+sky.fcstValue+'/'+t1h.fcstValue);
+  console.log(str);
+  return str;
+}
 function show () {
   return new Promise((resolve, reject) => {
     console.log(pop,tmx,tmn,pty,sky,t1h);
     //console.log('cur_time'+(cur_time.slice(-2)-1+'45'));
+      sendStr= sendMaker();
     resolve();
   });
 }
@@ -195,7 +201,9 @@ app.listen(3000, async()=>{
   time = cur_time;
   if(time>='0000' && time<'0210') {
     date=cur_date-1;
-
+    console.log('date : ',date);
+  } else {
+    date = cur_date;
   }
 
   if(time.slice(-2)<45) {
