@@ -13,7 +13,7 @@ var ny = '123';
 var cur_time;
 var cur_date;
 
-var pop,tmn=1,tmx=14,sky,t1h,pty;
+var pop,tmn,tmx,sky,t1h,pty;
 var sendStr;
 
 
@@ -22,7 +22,8 @@ const numOfRows_S = 40; // spaceData
 const numOfRows_T = 20; //timeData
 var list = [];
 function sendMaker() {
-  var str = (pop.fcstDate+'\n'+pop.fcstTime+','+pop.fcstValue+'/'+tmx.fcstValue+'/'+tmn.fcstValue+'/\n'+pty.baseTime+':'+pty.fcstValue+'/'+sky.fcstValue+'/'+t1h.fcstValue);
+  //var str = (new Date()+'\n'+pop.fcstTime+','+pop.fcstValue+'/'+tmx.fcstValue+'/'+tmn.fcstValue+'/\n'+pty.baseTime+':'+pty.fcstValue+'/'+sky.fcstValue+'/'+t1h.fcstValue);
+  var str = pop + tmn + tmx + sky + t1h + pty;
   return str;
 }
 
@@ -58,8 +59,20 @@ function popParsing(j_body) {
 }
 function spaceParsing(j_body) {
   var popMax=-1, pop_body;
+  var len;
   presentTime();
-  for(var i =0;i<numOfRows_S;i++) {
+  console.log(j_body);
+  if (j_body.response.header.resultCode != '0000') {
+    return ;
+  }
+  if(j_body.response.body.totalCount>=40){
+    len = 40;
+  } else {
+    len = j_body.response.body.totalCount;
+  }
+
+  for(var i =0;i<len;i++) {
+    //console.log('test'+j_body.response.body.items.item[0].category);
     if(j_body.response.body.items.item[i].category === 'TMN'&&
                 (j_body.response.body.items.item[i].fcstDate).toString() === cur_date) {
       //console.log(j_body.response.body.items.item[i]);
@@ -70,12 +83,12 @@ function spaceParsing(j_body) {
       //console.log(j_body.response.body.items.item[i]);
       tmx = j_body.response.body.items.item[i];
       //console.log(tmx);
-    } else if(j_body.response.body.items.item[i].category === 'POP') {
-      if(popMax<j_body.response.body.items.item[i].fcstValue) {
+    } else if(j_body.response.body.items.item[i].category === 'POP'&& popMax<j_body.response.body.items.item[i].fcstValue) {
+
         popMax = j_body.response.body.items.item[i].fcstValue;
         pop_body = j_body.response.body.items.item[i];
-      }
-      //console.log(j_body.response.body.items.item[i]);
+
+      console.log(j_body.response.body.items.item[i]);
     }
 
   }
@@ -94,7 +107,17 @@ function t_basicParsing(j_body) {
 
 async function timeParsing(j_body) {
   var temp;
-  for(var i =0;i<numOfRows_T;i++) {
+  var len;
+  console.log(j_body);
+  if (j_body.response.header.resultCode != '0000') {
+    return ;
+  }
+  if(j_body.response.body.totalCount>=20){
+    len = 20;
+  } else {
+    len = j_body.response.body.totalCount;
+  }
+  for(var i =0;i<len;i++) {
     if(j_body.response.body.items.item[i].category === 'T1H') {
       if(t_basicParsing(j_body.response.body.items.item[i])) {
         t1h = j_body.response.body.items.item[i];
@@ -193,7 +216,7 @@ async function  main(){//socket) {
     date = cur_date;
   }
   await weatherRequest(spaceDataUrl,date,'0200');
-  await weatherRequest(spaceDataUrl,date,(time.slice(0,2)-2)+'00');
+  await weatherRequest(spaceDataUrl,date,(time.slice(0,2))+'00');
   if(time.slice(-2)<45) {
     time=(time.slice(0,2)-1)+'30';
   } else {
