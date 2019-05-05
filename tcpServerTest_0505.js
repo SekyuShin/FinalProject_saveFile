@@ -368,11 +368,15 @@ var server = net.createServer(function(socket) {
     //client로부터 받아온 데이터를 출력
     console.log('rcv : '+data);
     if(String(data).indexOf('Android')) {
+      console.log("Android connect");
       Send().then(function(sendStr){
         socket.write(sendStr);
       });
     } else {
-      console.log("Android is not : fail");
+      console.log("Arduino connect");
+      Send().then(function(sendStr){
+        socket.write(sendStr);
+      });
     }
 
   });
