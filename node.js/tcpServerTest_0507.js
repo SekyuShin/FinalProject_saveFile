@@ -277,22 +277,22 @@ function sendMaker() {
     str+=','+tmn.fcstValue;
     switch(pty.fcstValue) {
       case 0:
-        str+=',-';
+        str+='/-';
         break;
       case 1:
-        str+=',rain';
+        str+='/rain';
         break;
       case 2:
-        str+=',sleet';
+        str+='/sleet';
         break;
       case 3:
-        str+=',snow';
+        str+='/snow';
         break;
       case 4:
-        str+=',shower';
+        str+='/shower';
         break;
       default:
-        str+=',=pe=';
+        str+='/=pe=';
         break;
     }
     switch(sky.fcstValue) {
@@ -300,19 +300,20 @@ function sendMaker() {
         str+=',clear';
         break;
       case 2:
-        str+=',little a cloud'; //삭제 예정
+        str+=',s_cloud'; //삭제 예정
         break;
       case 3:
         str+=',cloud';
         break;
       case 4:
-        str+=',lots of cloudy';
+        str+=',m_cloudy';
         break;
       default:
         str+=',=se=';
         break;
     }
     str+=','+t1h.fcstValue;
+    console.log('sendMaker = ',str);
     resolve(str+'\n');
   });
 
@@ -331,7 +332,7 @@ function Cron_Scheduler(date_str,dataUrl) {
           await weatherRequest(dataUrl,cur_date,b_time).then(()=> {
             resolve();
           });
-
+          sendMaker();
           //await Send();
           //console.log(`${date_str}: `,year,month,day,hour,minutes);
         });
@@ -345,6 +346,7 @@ function  main(){
 
   init().then((data)=>{
     console.log('init state = ',data);
+    sendMaker();
   });
 
   //socket.write(''+sendMaker());
@@ -372,13 +374,12 @@ var server = net.createServer(function(socket) {
       Send().then(function(sendStr){
         socket.write(sendStr);
       });
-    } else {
+    } else if(String(data).indexOf('Arduino')) {
       console.log("Arduino connect");
       Send().then(function(sendStr){
         socket.write(sendStr);
       });
     }
-
   });
 
   socket.on('close',function() {
