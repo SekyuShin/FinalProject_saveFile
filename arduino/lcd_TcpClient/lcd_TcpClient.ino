@@ -5,11 +5,11 @@
 #include <string.h>
 
 #ifndef STASSID
-#define STASSID "U+Net7E03"
-#define STAPSK  "415A003536"
+//#define STASSID "U+Net7E03"
+//#define STAPSK  "415A003536"
 
-//#define STASSID "Sekyu"
-//#define STAPSK  "tlstprb1191"
+#define STASSID "Sekyu"
+#define STAPSK  "tlstprb1191"
 #endif
 
 const char* ssid     = STASSID;
@@ -102,7 +102,7 @@ void loop(){
          lcdShow(1,str2);
        
      
-     delay(5*60*1000);
+     delay(1*30*1000);
     }
 
     while(!client.connect(host,port)) {
