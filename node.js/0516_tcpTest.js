@@ -330,9 +330,9 @@ function sendMaker() {
         break;
     }
     str+=','+t1h.fcstValue;
-    list.push(new Date()+"=="+count+"=="+str+'\n');
-    console.log('sendMaker = ',str);
-    resolve(str+'\n');
+    console.log(new Date()+"=="+count+"=="+str+'\n');
+    //console.log('sendMaker = ',str);
+    resolve(cur_date+cur_time+'/'+count+'/'+str+'\n');
   });
 
 }
@@ -414,11 +414,11 @@ server.on('error',function(err) {
 
 
 
-server.listen(5000,function() {
+server.listen(3000,function() {
   //접속 가능할때까지 대기
   console.log('linsteing on 3000..');
 });
-
+/*
 var http = express();
 
 http.get('/', function (req, res) {
@@ -428,3 +428,4 @@ http.get('/', function (req, res) {
 http.listen(3000, function() {
   console.log('Start Server:3000');
 });
+*/
