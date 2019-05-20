@@ -8,8 +8,8 @@ var SCOPES = [
               'https://www.googleapis.com/auth/calendar' // 캘린더 정보의 편집 권한? 입니다.
               ];
 
-var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/.credentials/';
+var TOKEN_DIR = //(process.env.HOME || process.env.HOMEPATH ||process.env.USERPROFILE) +
+                '/.credentials/';
 // 토큰이 저장될 디렉토리
 var TOKEN_PATH = TOKEN_DIR + 'calendar-nodejs-quickstart.json';
 // 토큰 파일 명
@@ -126,10 +126,9 @@ function listEvents(auth) {
   }, function(err, calendarList){
     if(err) console.log(err);
 
-    var deleteCalendarId;                               // 캘린더 삭제를 위한 아이디 변수
-    var isCGSCalendar = false;                         // 'CHEOLGUSO' 캘린더가 존재하는지 확인하기 위한 변수
-
-                                                        // 'CHEOLGUSO' 캘린더가 있는지 확인
+    var deleteCalendarId;       // 캘린더 삭제를 위한 아이디 변수
+    var isCGSCalendar = false;  // 'CHEOLGUSO' 캘린더가 존재하는지 확인하기 위한 변수
+    // 'CHEOLGUSO' 캘린더가 있는지 확인
     for(var i=0; i<calendarList.items.length; i++){
       if(calendarList.items[i].summary === 'CHEOLGUSO'){
         isCGSCalendar = true;
@@ -138,8 +137,7 @@ function listEvents(auth) {
     }
 
     if(isCGSCalendar){
-
-                                                        // 'CHEOLGUSO' 캘린더가 있다면 캘린더를 지움
+      // 'CHEOLGUSO' 캘린더가 있다면 캘린더를 지움
       calendar.calendars.delete({
         auth : auth,
         calendarId : deleteCalendarId
@@ -148,7 +146,6 @@ function listEvents(auth) {
       });
 
     }else{
-
       // 'CHEOLGUSO' 캘린더가 없다면 캘린더를 만듬
       calendar.calendars.insert({
         auth : auth,
@@ -158,7 +155,6 @@ function listEvents(auth) {
       }, function(err, calendars){
         if(err) console.log(err);
       });
-
     }
   });
 }
