@@ -2,7 +2,7 @@ const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 var googleAuth = require('google-auth-library');
-
+var moment=require('moment');
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
                 'https://www.googleapis.com/auth/calendar'
@@ -10,16 +10,22 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
 
 const TOKEN_PATH = 'token2.json';
 
+// requestGoogle('insert','google2',
+//               moment('201905202000','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
+//               moment('201905202100','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
 
-
-requestGoogle('insert','test2','2','3');
-
+requestGoogle('delete','googleTest',
+              moment('201905202000','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
+              moment('201905202200','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')
+            );
+//console.log( moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
+requestGoogle('list', moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
 function requestGoogle(command) {
   fs.readFile('client_secret.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Calendar API.
 
-    if(command == 'list') authorize(JSON.parse(content), listEvents);
+    if(command == 'list') authorize(JSON.parse(content), listEvents,arguments[1]);
     else if(command == 'insert') authorize(JSON.parse(content), insertEvents,arguments[1],arguments[2],arguments[3]);
     else if(command == 'delete') authorize(JSON.parse(content), deleteEvents,arguments[1],arguments[2],arguments[3]);
 
@@ -35,7 +41,7 @@ function authorize(credentials, callback) {
   fs.readFile(TOKEN_PATH, (err, token) => {
     if (err) return getAccessToken(oAuth2Client, callback);
     oAuth2Client.setCredentials(JSON.parse(token));
-    if(callback==listEvents) callback(oAuth2Client);
+    if(callback==listEvents) callback(oAuth2Client,arguments[2]);
     else if(callback==insertEvents) callback(oAuth2Client,arguments[2],arguments[3],arguments[4]);
     else if(callback==deleteEvents) callback(oAuth2Client,arguments[2],arguments[3],arguments[4]);
   });
@@ -71,11 +77,12 @@ function getAccessToken(oAuth2Client, callback) {
  * Lists the next 10 events on the user's primary calendar.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listEvents(auth) {
+function listEvents(auth,now) {
   const calendar = google.calendar({version: 'v3', auth});
+  console.log('now : '+now);
   calendar.events.list({
     calendarId: 'primary',
-    timeMin: (new Date()).toISOString(),
+    timeMin:now,
     maxResults: 10,
     singleEvents: true,
     orderBy: 'startTime',
@@ -87,7 +94,7 @@ function listEvents(auth) {
       console.log('Upcoming 10 events:');
       events.map((event, i) => {
         const start = event.start.dateTime || event.start.date;
-        console.log('%s - %s - %s', start, event.summary, event.id);
+        console.log('%s - %s ', start, event.summary);
       });
     } else {
       console.log('No upcoming events found.');
@@ -98,19 +105,25 @@ function deleteEvents(auth,text,start,end) {
   const calendar = google.calendar({version: 'v3', auth});
   calendar.events.list({
     calendarId: 'primary',
-    timeMin: (new Date()).toISOString(),
-    maxResults: 10,
+    timeMin:start,
+    timeMax:end,
     singleEvents: true,
     orderBy: 'startTime',
   }, (err, res) => {
     if (err) return console.log('The API returned an error: ' + err);
     const events = res.data.items;
-    console.log(new Date());
     if (events.length) {
-      console.log('Upcoming 10 events:');
       events.map((event, i) => {
-        const start = event.start.dateTime || event.start.date;
-        console.log('%s - %s - %s', start, event.summary, event.id);
+        if(event.summary == text) {
+          console.log(text+event.id);
+          calendar.events.delete({
+            calendarId: 'primary',
+            eventId:event.id
+          },(err,res)=>{
+            if(err) return console.log('The API returned an error: ' + err);
+            console.log('delete'+res.toString());
+          });
+        }
       });
     } else {
       console.log('No upcoming events found.');
@@ -119,11 +132,20 @@ function deleteEvents(auth,text,start,end) {
 
 
 }
-function insertEvents(auth,text,start,end) {
+function insertEvents(auth,text,t_start,t_end) {
   const calendar = google.calendar({version: 'v3', auth});
-  calendar.events.quickAdd({
+  var event = {
+   summary: text,
+   start: {
+     dateTime: t_start,
+   },
+   end: {
+     dateTime:t_end,
+   }
+ };
+  calendar.events.insert({
     calendarId : 'primary',
-    text:text
+    resource : event
   },(err,res)=>{
     if(err) return console.log('quickAdd error : '+err);
     console.log('test create');
