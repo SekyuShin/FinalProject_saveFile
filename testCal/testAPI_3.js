@@ -1,7 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
-var googleAuth = require('google-auth-library');
+//var googleAuth = require('google-auth-library');
 var moment=require('moment');
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
@@ -9,23 +9,29 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
                 ];
 
 const TOKEN_PATH = 'token2.json';
+var summaryText = 'test';
+var startText = '201905010000';
+var endText = '201905312359';
 
 // requestGoogle('insert','google2',
 //               moment('201905202000','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
 //               moment('201905202100','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
 
-requestGoogle('delete','googleTest',
-              moment('201905202000','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
-              moment('201905202200','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')
-            );
-//console.log( moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
-requestGoogle('list', moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
+// requestGoogle('delete',summaryText,
+//               moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
+//               moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')
+  //          );
+console.log( moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
+console.log( moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
+console.log( moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
+requestGoogle('list', moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
+                      moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')  );
 function requestGoogle(command) {
   fs.readFile('client_secret.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Calendar API.
 
-    if(command == 'list') authorize(JSON.parse(content), listEvents,arguments[1]);
+    if(command == 'list') authorize(JSON.parse(content), listEvents,arguments[1],arguments[2]);
     else if(command == 'insert') authorize(JSON.parse(content), insertEvents,arguments[1],arguments[2],arguments[3]);
     else if(command == 'delete') authorize(JSON.parse(content), deleteEvents,arguments[1],arguments[2],arguments[3]);
 
@@ -41,7 +47,7 @@ function authorize(credentials, callback) {
   fs.readFile(TOKEN_PATH, (err, token) => {
     if (err) return getAccessToken(oAuth2Client, callback);
     oAuth2Client.setCredentials(JSON.parse(token));
-    if(callback==listEvents) callback(oAuth2Client,arguments[2]);
+    if(callback==listEvents) callback(oAuth2Client,arguments[2],arguments[3]);
     else if(callback==insertEvents) callback(oAuth2Client,arguments[2],arguments[3],arguments[4]);
     else if(callback==deleteEvents) callback(oAuth2Client,arguments[2],arguments[3],arguments[4]);
   });
@@ -77,15 +83,16 @@ function getAccessToken(oAuth2Client, callback) {
  * Lists the next 10 events on the user's primary calendar.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listEvents(auth,now) {
+function listEvents(auth,start,end) {
   const calendar = google.calendar({version: 'v3', auth});
-  console.log('now : '+now);
+  //console.log('now : '+now);
   calendar.events.list({
     calendarId: 'primary',
-    timeMin:now,
-    maxResults: 10,
-    singleEvents: true,
-    orderBy: 'startTime',
+    timeMin:start,
+    timeMax:end,
+    // maxResults: 10,
+    // singleEvents: true,
+    // orderBy: 'startTime',
   }, (err, res) => {
     if (err) return console.log('The API returned an error: ' + err);
     const events = res.data.items;
@@ -114,8 +121,8 @@ function deleteEvents(auth,text,start,end) {
     const events = res.data.items;
     if (events.length) {
       events.map((event, i) => {
+        console.log(event.summary+event.id);
         if(event.summary == text) {
-          console.log(text+event.id);
           calendar.events.delete({
             calendarId: 'primary',
             eventId:event.id
