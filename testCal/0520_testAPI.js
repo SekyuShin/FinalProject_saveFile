@@ -1,5 +1,6 @@
 const fs = require('fs');
 const readline = require('readline');
+var net = require('net');
 const {google} = require('googleapis');
 //var googleAuth = require('google-auth-library');
 var moment=require('moment');
@@ -7,31 +8,25 @@ var moment=require('moment');
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
                 'https://www.googleapis.com/auth/calendar'
                 ];
-
+var list='';
 const TOKEN_PATH = 'token2.json';
-var summaryText = 'test';
-var startText = '201905010000';
-var endText = '201905312359';
 
 // requestGoogle('insert','google2',
 //               moment('201905202000','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
 //               moment('201905202100','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
-
-// requestGoogle('delete',summaryText,
-//               moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
-//               moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')
-  //          );
-console.log( moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
-console.log( moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
-console.log( moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
-requestGoogle('list', moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
-                      moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')  );
+// var dataStr = String(text).split('_');
+// requestGoogle(dataStr[1],dataStr[2],
+//               moment(dataStr[3],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
+//               moment(dataStr[4],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')
+//             );
+//console.log( moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
+//requestGoogle('list', moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
 function requestGoogle(command) {
   fs.readFile('client_secret.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Calendar API.
 
-    if(command == 'list') authorize(JSON.parse(content), listEvents,arguments[1],arguments[2]);
+    if(command == 'list') authorize(JSON.parse(content), listEvents,arguments[1]);
     else if(command == 'insert') authorize(JSON.parse(content), insertEvents,arguments[1],arguments[2],arguments[3]);
     else if(command == 'delete') authorize(JSON.parse(content), deleteEvents,arguments[1],arguments[2],arguments[3]);
 
@@ -47,7 +42,7 @@ function authorize(credentials, callback) {
   fs.readFile(TOKEN_PATH, (err, token) => {
     if (err) return getAccessToken(oAuth2Client, callback);
     oAuth2Client.setCredentials(JSON.parse(token));
-    if(callback==listEvents) callback(oAuth2Client,arguments[2],arguments[3]);
+    if(callback==listEvents) callback(oAuth2Client,arguments[2]);
     else if(callback==insertEvents) callback(oAuth2Client,arguments[2],arguments[3],arguments[4]);
     else if(callback==deleteEvents) callback(oAuth2Client,arguments[2],arguments[3],arguments[4]);
   });
@@ -83,16 +78,16 @@ function getAccessToken(oAuth2Client, callback) {
  * Lists the next 10 events on the user's primary calendar.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listEvents(auth,start,end) {
+function listEvents(auth,now) {
+  list='';
   const calendar = google.calendar({version: 'v3', auth});
-  //console.log('now : '+now);
+  console.log('now : '+now);
   calendar.events.list({
     calendarId: 'primary',
-    timeMin:start,
-    timeMax:end,
-    // maxResults: 10,
-    // singleEvents: true,
-    // orderBy: 'startTime',
+    timeMin:now,
+    maxResults: 10,
+    singleEvents: true,
+    orderBy: 'startTime',
   }, (err, res) => {
     if (err) return console.log('The API returned an error: ' + err);
     const events = res.data.items;
@@ -101,8 +96,10 @@ function listEvents(auth,start,end) {
       console.log('Upcoming 10 events:');
       events.map((event, i) => {
         const start = event.start.dateTime || event.start.date;
+        list+=('_'+start+'-'+ event.summary);
         console.log('%s - %s ', start, event.summary);
       });
+
     } else {
       console.log('No upcoming events found.');
     }
@@ -129,6 +126,7 @@ function deleteEvents(auth,text,start,end) {
           },(err,res)=>{
             if(err) return console.log('The API returned an error: ' + err);
             console.log('delete'+res.toString());
+
           });
         }
       });
@@ -156,5 +154,95 @@ function insertEvents(auth,text,t_start,t_end) {
   },(err,res)=>{
     if(err) return console.log('quickAdd error : '+err);
     console.log('test create');
+
   });
 }
+
+var server = net.createServer(function(socket) {
+  //서버를 생성
+  console.log(socket.address().address+'connected');
+
+
+  // socket.connect(function(){
+  //   console.log('connect');
+  // });
+  socket.on('data',function(data) {
+    //client로부터 받아온 데이터를 출력
+    console.log("Android connect");
+    console.log('rcv : '+data);
+    if(String(data).indexOf('Android')!=-1) { // Android_insert_go to movie_201905231800_201905232000
+      var testVar = "Android_insert_go to movie with friends_201905231100_201905231300_";
+      var dataStr = String(data).split('_');
+      // var start_t = moment(dataStr[3],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:00+09:00');
+      // var end_t= moment(dataStr[4],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:00+09:00');
+      // console.log(start_t);
+      // console.log(end_t);
+
+      if(dataStr[1]=='ouath') {
+        //getAccessToken
+      } else if(dataStr[1]=='list') {
+        requestGoogle('list', moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
+        setTimeout(function() {
+          socket.write(list);
+          socket.destroy();
+        },2000);
+
+      } else if(dataStr[1]=='insert') {
+        requestGoogle(dataStr[1],dataStr[2],
+                      moment(dataStr[3],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
+                      moment(dataStr[4],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')
+                    );
+        socket.write(function() {
+
+        });
+
+      } else if(dataStr[1]=='delete') {
+        //var summaryText=data.slice();
+        //var startText=data.slice();
+        //var endText=data.slice();
+
+        requestGoogle(dataStr[1],dataStr[2],
+                      moment(dataStr[3],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
+                      moment(dataStr[4],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')
+                    );
+      socket.write('delete');
+      } else if(dataStr[1]=='weather') {
+        socket.write('weather');
+      }
+      //socket.destroy();
+    } else if(String(data).indexOf('Arduino')!=-1) {
+      console.log("Arduino connect");
+      Send().then(function(sendStr){
+        socket.write(sendStr);
+
+        socket.destroy();
+      });
+    }else {
+      Send().then(function(sendStr){
+        console.log('not data');
+        socket.write('not');
+        socket.destroy();
+
+      });
+    }
+  });
+
+  socket.on('close',function() {
+    socket.destroy();
+    console.log('client close');
+  });
+  //socket.write('welcome to server');
+  //접속시 메세지 출력
+});
+
+server.on('error',function(err) {
+  //에러시 메세지 출력
+  console.log('err' + err);
+});
+
+
+
+server.listen(3000,function() {
+  //접속 가능할때까지 대기
+  console.log('linsteing on 3000..');
+});

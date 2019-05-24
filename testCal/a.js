@@ -21,15 +21,19 @@ function presentTime() {
   });
 }
 function rfc3339(time) {
-  const YYYY = time.slice(0,5);
+  var rfc_format='';
+  rfc_format += time.slice(0,4);
+  rfc_format += '-';
+  rfc_format +=time.slice(4,6);
+  rfc_format += '-';
+  rfc_format += time.slice(6,8);
+  rfc_format += 'T';
+  rfc_format += time.slice(8,10);
+  rfc_format += ':';
+  rfc_format += time.slice(10,12);
+  rfc_format += ':00+09:00';
 
-  const MM = time.slice(5,7);
-  const DD = time.slice(7,9);
-  cur_date = YYYY+MM+DD;
-  const hh = time.slice(9,11);
-  const mm = time.slice(11,13);
-  cur_time = hh+mm;
-  return cur_date+cur_time;
+  return rfc_format;
 }
 function test1(callback) {
   if(callback === test) {
@@ -41,5 +45,5 @@ function test1(callback) {
 }
 test1(test);
 
-presentTime();
-console.log(rfc3339('199208100909'));
+
+console.log(rfc3339('201905201550'));
