@@ -4,6 +4,7 @@ var net = require('net');
 var {google} = require('googleapis');
 //var googleAuth = require('google-auth-library');
 var moment=require('moment');
+var isChangeList = false;
 // If modifying these scopes, delete token.json.
 var SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
                 'https://www.googleapis.com/auth/calendar'
@@ -23,6 +24,7 @@ var TOKEN_PATH = 'token2.json';
 //             );
 //console.log( moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
 //requestGoogle('list', moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
+
 function requestGoogle(command) {
   var arr = [];
   arr.push(arguments[1]);
@@ -131,7 +133,7 @@ function getAccessToken(oAuth2Client, callback) {
 }
 function listEvents(auth,start_t,end_t) {
   return new Promise(function(resolve,reject) {
-  list='';
+  var list='';
   var calendar = google.calendar({version: 'v3', auth});
   //console.log('now : '+now);
   calendar.events.list({
@@ -225,7 +227,7 @@ var server = net.createServer(function(socket) {
   // });
   socket.on('data',function(data) {
     //client로부터 받아온 데이터를 출력
-    console.log("Android connect");
+
     console.log('rcv : '+data);
     if(String(data).indexOf('Android')!=-1) { // Android_insert_go to movie_201905231800_201905232000
       //var testVar = "Android_insert_go to movie with friends_201905231100_201905231300_";
@@ -247,6 +249,7 @@ var server = net.createServer(function(socket) {
                               .then(function(data) {
                                   socket.write(data);
                                     console.log(data);
+                                    isChangeList = true;
                                     socket.destroy();
                                     }
                                   );
@@ -258,6 +261,7 @@ var server = net.createServer(function(socket) {
                     ).then(function(data) {
                       socket.write(data);
                       console.log(data);
+                      isChangeList = true;
                       socket.destroy();
                     });
 
@@ -272,6 +276,7 @@ var server = net.createServer(function(socket) {
                     ).then(function(data) {
                       socket.write(data);
                       console.log(data);
+                      isChangeList = true;
                       socket.destroy();
                     });
 
@@ -280,13 +285,24 @@ var server = net.createServer(function(socket) {
       }
       //socket.destroy();
     } else if(String(data).indexOf('Arduino')!=-1) {
-      console.log("Arduino connect");
-      Send().then(function(sendStr){
-        socket.write(sendStr);
-        console.log(data);
-        socket.destroy();
-      });
-    }else {
+      var arduinoData='';
+      if(String(data).indexOf('schedule')!=-1 || isChangeList) {
+        console.log(moment().format('YYYY-MM-DDTHH:mm:SS+09:00')+'_'+moment().add(12,'hours').format('YYYY-MM-DDTHH:mm:SS+09:00'));
+      requestGoogle('list', moment().format('YYYY-MM-DDTHH:mm:SS+09:00'),
+                            moment().add(12,'hours').format('YYYY-MM-DDTHH:mm:SS+09:00'))
+                            .then(function(data) {
+                                arduinoData+=moment().format('YYYY-MM-DDTHH:mm:SS+09:00');
+                                arduinoData+=data;
+                                socket.write(arduinoData);
+                                  console.log(data);
+                                  isChangeList = false;
+                                  socket.destroy();
+                                  }
+                                );
+      } else {
+        socket.write(moment().format('YYYY-MM-DDTHH:mm:SS+09:00'));
+      }
+    } else {
       Send().then(function(sendStr){
         console.log('not data');
         socket.write('not');
@@ -296,7 +312,7 @@ var server = net.createServer(function(socket) {
   });
 
   socket.on('close',function() {
-    socket.destroy();
+    //socket.destroy();
     console.log('client close');
   });
   //socket.write('welcome to server');

@@ -12,7 +12,7 @@ var SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
                 ];
 
 var TOKEN_PATH = 'token.json';
-
+var isChangeList = false;
 var url = 'http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2/';
 var timeDataUrl = 'ForecastTimeData'; //예보실황
 var spaceDataUrl = 'ForecastSpaceData'; //동네예보
@@ -22,10 +22,9 @@ var nx = '59'; //+)추가할까
 var ny = '123';
 var cur_time;
 var cur_date;
-var list=[];
 var pop,tmn,tmx,sky,t1h,pty;
 var sendStr;
-var count=0;
+
 
 
 var _type = 'json';
@@ -36,6 +35,7 @@ function requestGoogle(command) {
   arr.push(arguments[1]);
   arr.push(arguments[2]);
   arr.push(arguments[3]);
+
   return new Promise(function(resolve,reject) {
 
     fs.readFile('client_secret.json', function(err, content)  {
@@ -141,9 +141,9 @@ function getAccessToken(oAuth2Client, callback) {
 
 function listEvents(auth,start_t,end_t) {
   return new Promise(function(resolve,reject) {
-  list='';
+  var list='';
   var calendar = google.calendar({version: 'v3', auth});
-  //console.log('now : '+now);
+  console.log('listEvent',start_t,end_t);
   calendar.events.list({
     calendarId: 'primary',
     timeMin:start_t,
@@ -159,7 +159,7 @@ function listEvents(auth,start_t,end_t) {
       events.map(function(event, i)  {
         var start = event.start.dateTime || event.start.date;
         var end = event.end.dateTime || event.end.date;
-        list+=('_'+start+'_'+end+'_'+ event.summary+'/');
+        list+=('_'+start+'_'+end+'_'+ event.summary);
         console.log('%s - %s ', start, event.summary);
       });
       resolve(list);
@@ -375,7 +375,7 @@ function weatherRequest(dataUrl,date,time) {
   return new Promise(async(resolve, reject) => {
     var j_body;
     await getRowLen(dataUrl,date,time).then(async(len)=>{
-      count+=1;
+
       console.log(len);
       if(len === -1) {
         console.log('error : len');
@@ -386,8 +386,8 @@ function weatherRequest(dataUrl,date,time) {
             url: url + dataUrl,
             method: 'GET'
         }, await function (error, response, body) {
-          count+=1;
-          console.log("count==========================="+count+"=============================count");
+
+
           if(!error&&response.statusCode==200) {
             //console.log(url+dataUrl);
             j_body = JSON.parse(body);
@@ -490,50 +490,50 @@ function sendMaker() {
     // pty 강수형태 0:없음, 1:비, 2:비/눈, 3:눈, 4:소나기
     // sky 하늘 상태  1:맑음, 3:구름 많음, 4:흐림 (2.삭제 2019.06)
     // t1h 현재 기온
-    str+='/'+pop.fcstTime+':'+pop.fcstValue;
-    str+=','+tmx.fcstValue;
-    str+=','+tmn.fcstValue;
+    str+='_'+pop.fcstTime+':'+pop.fcstValue;
+    str+='_'+tmx.fcstValue;
+    str+='_'+tmn.fcstValue;
     switch(pty.fcstValue) {
       case 0:
-        str+='/-';
+        str+='_-';
         break;
       case 1:
-        str+='/rain';
+        str+='_rain';
         break;
       case 2:
-        str+='/sleet';
+        str+='_sleet';
         break;
       case 3:
-        str+='/snow';
+        str+='_snow';
         break;
       case 4:
-        str+='/shower';
+        str+='_shower';
         break;
       default:
-        str+='/=pe=';
+        str+='_=pe=';
         break;
     }
     switch(sky.fcstValue) {
       case 1:
-        str+=',clear';
+        str+='_clear';
         break;
       case 2:
-        str+=',s_cloud'; //삭제 예정
+        str+='_s_cloud'; //삭제 예정
         break;
       case 3:
-        str+=',cloud';
+        str+='_cloud';
         break;
       case 4:
-        str+=',m_cloudy';
+        str+='_m_cloudy';
         break;
       default:
-        str+=',=se=';
+        str+='_=se=';
         break;
     }
-    str+=','+t1h.fcstValue;
-    console.log(new Date()+"=="+count+"=="+str+'\n');
+    str+='_'+t1h.fcstValue;
+    console.log(str);
     //console.log('sendMaker = ',str);
-    resolve(cur_date+cur_time+'/'+count+'/'+str+'\n');
+    resolve(str);
   });
 
 }
@@ -596,6 +596,7 @@ var server = net.createServer(function(socket) {
                                   socket.write(data);
                                     console.log(data);
                                     socket.destroy();
+                                    isChangeList = true;
                                     }
                                   );
       } else if(dataStr[1]=='insert') {
@@ -606,6 +607,7 @@ var server = net.createServer(function(socket) {
                               socket.write(data);
                               console.log(data);
                               socket.destroy();
+                              isChangeList = true;
                             });
 
       } else if(dataStr[1]=='delete') {
@@ -619,6 +621,7 @@ var server = net.createServer(function(socket) {
                               socket.write(data);
                               console.log(data);
                               socket.destroy();
+                              isChangeList = true;
                             });
       } else if(dataStr[1]=='weather') {
         Send().then(function(sendStr){
@@ -628,11 +631,36 @@ var server = net.createServer(function(socket) {
       }
 
     } else if(String(data).indexOf('Arduino')!=-1) {
+      var arduinoData='';
       console.log("Arduino connect");
-      Send().then(function(sendStr){
-        socket.write(sendStr);
-        socket.destroy();
-      });
+      var list_start = moment().format('YYYY-MM-DDTHH:mm:00+09:00');
+      var list_end = moment().add(12,'hours').format('YYYY-MM-DDTHH:mm:00+09:00');
+      console.log(list_start,list_end);
+      if(String(data).indexOf('schedule')!=-1 || isChangeList) {
+        Send().then(function(sendStr){
+          arduinoData+=moment().format('YYYY-MM-DDTHH:mm:SS+09:00');
+          arduinoData+=sendStr;
+
+          requestGoogle('list', list_start,list_end).then(function(data) {
+                                                arduinoData+=data;
+                                                isChangeList = false;
+                                                console.log(arduinoData);
+                                                socket.write(arduinoData);
+                                                socket.destroy();
+                                              }
+                                            );
+          });
+      } else {
+        Send().then(function(sendStr){
+          arduinoData+=moment().format('YYYY-MM-DDTHH:mm:SS+09:00');
+          arduinoData+=sendStr;
+          console.log(arduinoData);
+          socket.write(arduinoData);
+          socket.destroy();
+        });
+
+      }
+
     }else {
       Send().then(function(sendStr){
         console.log('not data');
@@ -644,7 +672,7 @@ var server = net.createServer(function(socket) {
   });
 
   socket.on('close',function() {
-    socket.destroy();
+    //socket.destroy();
     console.log('client close');
   });
   //socket.write('welcome to server');
