@@ -35,6 +35,9 @@ function requestGoogle(command) {
   arr.push(arguments[1]);
   arr.push(arguments[2]);
   arr.push(arguments[3]);
+  arr.push(arguments[4]);
+  arr.push(arguments[5]);
+  arr.push(arguments[6]);
 
   return new Promise(function(resolve,reject) {
 
@@ -53,6 +56,10 @@ function requestGoogle(command) {
         authorize(JSON.parse(content), deleteEvents,arr[0],arr[1],arr[2]).then(function(data) {
           resolve(data);
         });
+      }else if(command == 'update') {
+        authorize(JSON.parse(content), updateEvents,arr[0],arr[1],arr[2],arr[3],arr[4],arr[5]).then(function(data) {
+          resolve(data);
+        });
       }
     });
 
@@ -65,7 +72,9 @@ function authorize(credentials, callback) {
   arr.push(arguments[2]);
   arr.push(arguments[3]);
   arr.push(arguments[4]);
-
+  arr.push(arguments[5]);
+  arr.push(arguments[6]);
+  arr.push(arguments[7]);
   return new Promise(function(resolve,reject) {
 
   var {client_secret, client_id, redirect_uris} = credentials.installed;
@@ -87,6 +96,10 @@ function authorize(credentials, callback) {
     }
     else if(callback==deleteEvents) {
       callback(oAuth2Client,arr[0],arr[1],arr[2]).then(function(data) {
+        resolve(data);
+      });
+    }else if(callback==updateEvents) {
+      callback(oAuth2Client,arr[0],arr[1],arr[2],arr[3],arr[4],arr[5]).then(function(data) {
         resolve(data);
       });
     }
@@ -191,6 +204,51 @@ function deleteEvents(auth,text,start,end) {
           },function(err,res){
             if(err) return reject('====delete err====='+err);
             resolve('delete'+res.toString());
+
+          });
+        }
+      });
+    } else {
+      console.log('No upcoming events found.');
+    }
+  });
+  });
+
+}
+function updateEvents(auth,p_text,p_start,p_end,text,start,end) {
+
+  return new Promise(function(resolve,reject) {
+  var calendar = google.calendar({version: 'v3', auth});
+  console.log("updateEvents => ",p_text,p_start,p_end,text,start,end);
+  var d_event = {
+   summary: text,
+   start: {
+     dateTime: start,
+   },
+   end: {
+     dateTime:end,
+   }
+ };
+  calendar.events.list({
+    calendarId: 'primary',
+    timeMin:p_start,
+    timeMax:p_end,
+    singleEvents: true,
+    orderBy: 'startTime',
+  }, function(err, res) {
+    if (err) return reject('====update err====='+err);
+    var events = res.data.items;
+    if (events.length) {
+      events.map((event, i) => {
+        console.log(event.summary,event.id);
+        if(event.summary == p_text) {
+          calendar.events.update({
+            calendarId: 'primary',
+            eventId:event.id,
+            resource : d_event
+          },function(err,res){
+            if(err) return reject('====update err====='+err);
+            resolve('update'+res.toString());
 
           });
         }
@@ -623,11 +681,22 @@ var server = net.createServer(function(socket) {
                               socket.destroy();
                               isChangeList = true;
                             });
-      } else if(dataStr[1]=='update') {
+      } else if(dataStr[1]=='update') { //7개
         //var summaryText=data.slice();
         //var startText=data.slice();
         //var endText=data.slice();
-
+        requestGoogle(dataStr[1],dataStr[2],
+                              moment(dataStr[3],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:ss+09:00'),
+                              moment(dataStr[4],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:ss+09:00'),
+                              dataStr[5],
+                              moment(dataStr[6],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:ss+09:00'),
+                              moment(dataStr[7],'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:ss+09:00')
+                            ).then(function(data) {
+                              socket.write(data);
+                              console.log(data);
+                              socket.destroy();
+                              isChangeList = true;
+                            });
       }else if(dataStr[1]=='weather') {
         Send().then(function(sendStr){
           socket.write(sendStr);
@@ -638,8 +707,8 @@ var server = net.createServer(function(socket) {
     } else if(String(data).indexOf('Arduino')!=-1) {
       var arduinoData='';
       console.log("Arduino connect");
-      var list_start = moment().format('YYYY-MM-DDTHH:mm:00+09:00');
-      var list_end = moment().add(12,'hours').format('YYYY-MM-DDTHH:mm:00+09:00');
+      var list_start = moment().format('YYYY-MM-DDTHH:mm:ss+09:00');
+      var list_end = moment().add(12,'hours').format('YYYY-MM-DDTHH:mm:ss+09:00');
       console.log(list_start,list_end);
       if(String(data).indexOf('schedule')!=-1 || isChangeList) {
         Send().then(function(sendStr){
