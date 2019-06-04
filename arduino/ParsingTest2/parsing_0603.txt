@@ -1,0 +1,138 @@
+#include<Wire.h>
+
+#define REALTIME now.arr[0]
+#define POP now.arr[1]
+#define TMX now.arr[2]
+#define TMN now.arr[3]
+#define SKY now.arr[4]
+#define PTY now.arr[5]
+#define T1H now.arr[6]
+#define START ListArr[0]
+#define END ListArr[1]
+#define TEXT ListArr[2]
+
+
+String str1 = "2019-05-27T16:55:04+09:00_1800:30_20_18_rain_m-cloudy_18\n"; //8
+String str2 = "2019-05-27T16:57:37+09:00_1800:30_20_18_rain_m-cloudy_18_170_180_test\n";
+String str3 = "2019-05-27T16:57:37+09:00_1800:30_20_18_rain_m-cloudy_18_170_180_test_180_190_test1\n";
+String str4 = "2019-05-27T16:57:37+09:00_1800:30_20_18_rain_m-cloudy_18_170_180_test_180_190_test1_200_210_test2\n";
+// 7 10 13 16
+//24 led strip => 5단위로 12시간 갱신120 넘어가면 -120
+
+typedef struct {
+  String ListArr[3]; //START,END,TEXT
+}List;
+typedef struct {
+  String arr[7]; //REALTIME, POP,TMX,TMN,SKY,PTY,T1H
+}Weather;
+
+Weather now;
+List *list;
+char count;
+
+void parsingStr(String str) {
+  signed char section;
+  char i=0;
+  
+  free(list);
+  list = NULL;
+  Serial.printf("%d",list);
+  Serial.println(str);
+  //Serial.println(POP);
+  count =0;
+  while(str[i]!='\n') {
+     if(str[i] == '_') count++;
+     i++;
+  }
+  //Serial.println(count,DEC);
+  count = (count-6)/3;
+
+  if(count!=0) {
+    
+     Serial.println("===realloc");
+     Serial.printf("count %d\n",count);
+     list = (List*)malloc(sizeof(List)*count);
+     Serial.printf("%d",list);
+     //realloc(list,sizeof(List)*count);
+    
+  }
+  i=0;
+   
+  while(str.length()) { //re
+    Serial.printf("============");
+    Serial.println(str.length());
+    Serial.println(str);
+    section= str.indexOf('_');
+    Serial.printf("section = %d\n",section);
+    if(section==-1) {
+      Serial.println("False");
+      section = str.length()-1;
+    }
+    //Serial.println(section,DEC);
+    
+    if(i<7) {
+      now.arr[i]= str.substring(0,section);
+    } else {
+      
+      switch((i-7)%3) {
+       case 0:
+        list[(i-7)/3].START = str.substring(0,section); 
+        break;
+       case 1:
+        list[(i-7)/3].END = str.substring(0,section); 
+        break;
+       case 2:
+        list[(i-7)/3].TEXT = str.substring(0,section); 
+        break;
+      }
+      
+    }
+    Serial.println(str.substring(0,section));
+    str.remove(0,section+1);
+    i++;
+  }
+  
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  list = (List*)malloc(sizeof(List));
+}
+
+
+void loop()
+{
+  static int _count = 0;
+
+  switch((_count++)%4) {
+    case 0:
+      parsingStr(str1);
+      break;
+    case 1:
+      parsingStr(str2);
+      break;
+    case 2:
+      parsingStr(str3);
+      break;
+    case 3:
+      parsingStr(str4);
+      break;
+    
+  }
+  
+  Serial.println("start");
+  
+  for(int i=0;i<7;i++) {
+   Serial.println(now.arr[i]); 
+  }
+  for(int i=0;i<count;i++) {
+   Serial.printf("list[%d] ",i+1);
+   Serial.print(list[i].START);
+   Serial.print(list[i].END);
+   Serial.println(list[i].TEXT);
+   
+  }
+  Serial.println("end");
+  delay(10000);
+}
