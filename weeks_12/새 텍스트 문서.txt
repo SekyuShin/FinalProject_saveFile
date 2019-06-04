@@ -1,0 +1,9 @@
+  String *p;
+
+  p = (String *)malloc(sizeof(String)*2);
+  p[0] = "hello";
+  p[1] = "hit2";
+
+  for(int i =0;i<2;i++) {
+    Serial.println(p[i]);
+  }
