@@ -177,7 +177,7 @@ function listEvents(auth,start_t,end_t) {
       });
       resolve(list);
     } else {
-      console.log('No upcoming events found.');
+      resolve('No upcoming events found.');
     }
   });
   });
@@ -194,6 +194,7 @@ function deleteEvents(auth,text,start,end) {
   }, function(err, res) {
     if (err) return reject('====delete err====='+err);
     var events = res.data.items;
+    console.log("delete eventslnegth : "+events.length);
     if (events.length) {
       events.map((event, i) => {
         console.log(event.summary+event.id);
@@ -203,13 +204,13 @@ function deleteEvents(auth,text,start,end) {
             eventId:event.id
           },function(err,res){
             if(err) return reject('====delete err====='+err);
-            resolve('delete'+res.toString());
+            resolve('delete'+text+start+end);
 
           });
         }
       });
     } else {
-      console.log('No upcoming events found.');
+      resolve('No upcoming events found.');
     }
   });
   });
@@ -238,6 +239,7 @@ function updateEvents(auth,p_text,p_start,p_end,text,start,end) {
   }, function(err, res) {
     if (err) return reject('====update err====='+err);
     var events = res.data.items;
+    console.log("update eventslnegth : "+events.length);
     if (events.length) {
       events.map((event, i) => {
         console.log(event.summary,event.id);
@@ -248,13 +250,13 @@ function updateEvents(auth,p_text,p_start,p_end,text,start,end) {
             resource : d_event
           },function(err,res){
             if(err) return reject('====update err====='+err);
-            resolve('update'+res.toString());
+            resolve('update'+text+start+end);
 
           });
         }
       });
     } else {
-      console.log('No upcoming events found.');
+      resolve('No upcoming events found.');
     }
   });
   });

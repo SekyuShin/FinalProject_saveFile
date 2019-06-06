@@ -171,6 +171,7 @@ function listEvents(auth,start_t,end_t) {
 }
 function deleteEvents(auth,text,start,end) {
   return new Promise(function(resolve,reject) {
+    console.log("delete =========== auth",text,start,end);
   var calendar = google.calendar({version: 'v3', auth});
   calendar.events.list({
     calendarId: 'primary',
@@ -205,6 +206,7 @@ function deleteEvents(auth,text,start,end) {
 
 function insertEvents(auth,text,t_start,t_end) {
   return new Promise(function(resolve,reject) {
+    console.log("insert =========== auth",text,t_start,t_end);
   var calendar = google.calendar({version: 'v3', auth});
   var event = {
    summary: text,
