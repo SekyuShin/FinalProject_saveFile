@@ -751,6 +751,7 @@ var server = net.createServer(function(socket) {
 
   socket.on('close',function() {
     //socket.destroy();
+    socket.destroy();
     console.log('client close');
   });
   //socket.write('welcome to server');
