@@ -1,4 +1,4 @@
-nek0427
+
 #include <Adafruit_NeoPixel.h>   // 네오픽셀 라이브러리를 불러옵니다.
 #include<Wire.h>
 
@@ -21,13 +21,12 @@ typedef struct {
   char g;
   char b;
 }color;
-
 color setColor(char);
 int realTimeToLed();
 int listToLed(String);
 ledStrip* ledSetting();
 void ledControl();
-
+void curTimeOnOff(char);
 
 void setup() {
     //testsetupList(
@@ -40,12 +39,13 @@ void setup() {
 }
 
 void loop() {                              // 이 안에 입력한 내용들이 반복 실행됩니다
-    
+    curTimeOnOff(0);
+    curTimeOnOff(1);
     ledControl();
     delay(1000);
 }
 
-color setColor(char whatColor) { //0-23
+color setColor(char whatColor) { //0-23 컬러 정하기
   color wc;
   char colorArray[] = {200,210,220,120, 20, 21, 22, 12,  2,102,202,201};
   char colorArray2[] = {311,321,331,231,131,132,133,123,113,213,313,312};
@@ -70,18 +70,18 @@ color setColor(char whatColor) { //0-23
       }
       return wc;
 }
-ledStrip* ledSetting() {
+ledStrip* ledSetting() { //ledStrip 색깔과 start, end 셋팅
   static ledStrip *led = NULL;
   color whatColor;
   int i;
-  if(count) { 
+  if(listCount) { 
     free(led);
     led = NULL;
-      led = (ledStrip*)malloc(sizeof(ledStrip)*count);  
+      led = (ledStrip*)malloc(sizeof(ledStrip)*listCount);  
   } else {
     free(led);
     led = NULL;
-    return 0;
+    return led;
   }
   
   for(i = 0;i<listCount;i++) {
@@ -94,6 +94,25 @@ ledStrip* ledSetting() {
   }
   return led;
 }
+void curTimeOnOff(char cur_time) { //현재시간 onOff
+  static char t;
+  char color;
+  strip.begin();                           // 네오픽셀 제어시작
+  strip.show();                            // 네오픽셀 초기화 
+  if(cur_time == -1) {
+    color = 0;
+  }else if( cur_time == 1) {
+    color = 100;
+  }else {
+    t = cur_time;
+    color = 100;
+  } 
+    if(cur_time >=120) { //현재시간 led표시
+     strip.setPixelColor((t-120)/5, color,color ,color);
+    } else {
+     strip.setPixelColor(t/5, color,color ,color0);
+  }
+}
 
 
 
@@ -103,28 +122,27 @@ void ledControl() {
   boolean after;
   int st_j,en_j;
   
+  strip.begin();                           // 네오픽셀 제어시작
+  strip.show();                            // 네오픽셀 초기화
+  for(int i = 0 ;i<24;i++) {
+    strip.setPixelColor(i, 0,0,0);
+  }
    led = ledSetting(); //led 세팅
-   strip.begin();                           // 네오픽셀 제어시작
-   strip.show();                            // 네오픽셀 초기화
+   if(led == NULL) {
+    return 0;
+   }
+   
    cur_time = realTimeToLed();    //현재시간세팅
  
   Serial.print("cur_time");
   Serial.println(cur_time,DEC);
+  
  if(cur_time>=120) { //오후 210 - 90(330)
   after = true;
  }else after =false;
 
- if(cur_time == 0)strip.setPixelColor(23, 0,0,0); //전의 현재시간 지우기 수정할수도
- else {
-  if(cur_time >=120) {
-     strip.setPixelColor((cur_time-125)/5, 0,0 ,0);
-  } else {
-     strip.setPixelColor((cur_time-5)/5, 0,0,0);
-  }
- }
 
-
-for(int i =0 ;i<count;i++) {
+for(int i =0 ;i<listCount;i++) {
     if(after) { //오후
       if(led[i].st>led[i].en) { // 210,15
         st_j = led[i].st;
@@ -165,11 +183,7 @@ for(int i =0 ;i<count;i++) {
   } //Serial.println("");
  
 }
-    if(cur_time >=120) { //현재시간 led표시
-     strip.setPixelColor((cur_time-120)/5, 100,100 ,100);
-    } else {
-     strip.setPixelColor(cur_time/5, 100,100 ,100);
-    }
+  curTimeOnOff(cur_time);
     
 }
 
