@@ -43,8 +43,8 @@ void (*weatherPty)(int,int);
 #define POP now.arr[1]
 #define TMX now.arr[2]
 #define TMN now.arr[3]
-#define SKY now.arr[4]
-#define PTY now.arr[5]
+#define SKY now.arr[5]
+#define PTY now.arr[4]
 #define T1H now.arr[6]
 #define START ListArr[0]
 #define END ListArr[1]
@@ -213,12 +213,12 @@ void loop()
         if((readTime/100)%3000==0) { //5분단위
            Serial.println("5분단위");
            tcpInterface(true);
-           matrix.fillScreen(0);
+           
            setWeather();
         }else if((readTime/100)%600==0) { //1분단위
            Serial.println("1분단위");
            tcpInterface(false);
-           matrix.fillScreen(0);
+           
            setWeather();
         } 
         ////////////////////////////////
@@ -287,8 +287,8 @@ void ShowParsingData() { //삭제예정
   Serial.println(toStringData(&POP));
   Serial.println(toStringData(&TMX));
   Serial.println(toStringData(&TMN));
-  Serial.println(toStringData(&SKY));
   Serial.println(toStringData(&PTY));
+  Serial.println(toStringData(&SKY));
   Serial.println(toStringData(&T1H));
   for(int i=0;i<listCount;i++) {
     Serial.println(toStringData(&list[i].START));
@@ -369,12 +369,12 @@ String toStringData(char *sel) {
     return data.substring(POP+1,TMX);
   }else if(&TMN == sel) {
     return data.substring(TMX+1,TMN);
-  }else if(&SKY == sel) {
-    return data.substring(TMN+1,SKY);
   }else if(&PTY == sel) {
-    return data.substring(SKY+1,PTY);
+    return data.substring(TMN+1,PTY);
+  }else if(&SKY == sel) {
+    return data.substring(PTY+1,SKY);
   }else if(&T1H == sel) {
-    return data.substring(PTY+1,T1H);
+    return data.substring(SKY+1,T1H);
   }
    for(int i =0;i<listCount*3;i++) {
     if(&(list[i].START) == sel) {
@@ -393,6 +393,7 @@ String toStringData(char *sel) {
 }
 void showClock() {
   int rHour,rMin,rSec;
+  static int pHour,pMin;
   rSec = (readTime/1000)%60; //delete
   rMin = (readTime/60000)%60;
   rHour = (readTime/(60*60000))%24; 
@@ -403,8 +404,12 @@ void showClock() {
   Serial.print(rMin,DEC);
   Serial.print(" : ");
   Serial.println(rSec,DEC); //delete
-  if(rSec==0) matrix.fillRect(32,0,22,14,0);
-  watch(rHour,rMin);
+  
+  if(pMin !=rMin) {
+    matrix.fillRect(8,0,47,14,0);
+    watch(rHour,rMin);
+    pMin = rMin;
+  }
   cur_time_test();
 }
 
@@ -614,7 +619,10 @@ int realTimeToLed() {
 /////////////////////////////////////////////////////////////////////////////////
 
 void setWeather() {
-           matrix.fillScreen(0);
+           
+    matrix.fillRect(0,0,7,32,0);
+    matrix.fillRect(8,15,56,32,0);
+    matrix.fillRect(56,0,8,32,0);
            Serial.println("=========start weatherSet");
            if(toStringData(&SKY).indexOf("cloud")!=-1){
             weatherSky = Cloud;///////////////////////////////////////////////////
@@ -675,7 +683,7 @@ boolean downPosition() { // 도트매트릭스에 눈이나 비가 오는 기능
   if(count == 0) {
     for(int i =0;i<8;i++) {
         location[i].y = random(-10,0);  // 비나 눈효과를 좀 더 극적으로 주기 위해 
-        location[i].x = random(-5,5);   // 랜덤으로 X,Y를 설정함
+        location[i].x = random(-4,4);   // 랜덤으로 X,Y를 설정함
         if(location[i].x <0) (location[i].x)+=32; 
       }
     }
@@ -783,7 +791,7 @@ void Sun(){ // 기상효과(맑음 또는 해) 함수
 void watch(int hour,int minute){ // 시계함수
   String tempHour = "00"+String(hour);
   String tempMin = "00"+String(minute);
-   tempHour = tempHour.substring(tempHour.length()-2);
+  tempHour = tempHour.substring(tempHour.length()-2);
   tempMin = tempMin.substring(tempMin.length()-2);
   
   matrix.setTextColor(matrix.Color333(1,2,3)); // 시계의 색상설정
@@ -794,6 +802,7 @@ void watch(int hour,int minute){ // 시계함수
   matrix.setCursor(33,0); // 시계를 띄울 좌표설정
   matrix.print(tempMin);
   //matrix.print("00");
+  
   matrix.setTextSize(1);
   
 }
