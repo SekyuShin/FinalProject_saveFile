@@ -91,6 +91,7 @@ typedef struct {
   unsigned char g;
   unsigned char b;
 }color;
+
 color setColor(char);
 int realTimeToLed();
 int listToLed(String);
@@ -100,7 +101,7 @@ void curTimeOnOff(int);
 
 color cur_color;
 //////////////////////////////////////////////////////////////////
-
+ledStrip *led = NULL;
 List *list;
 Weather now;
 String data,dataList; //tcp로 부터 받아온 정보와 따로 보관할 일정정보
@@ -136,9 +137,9 @@ void setup()
   delay(100);
     strip.begin();                           // 네오픽셀 제어시작
     strip.show();  
-    for(int i=0;i<240;i+=5) {
+    for(int i=0;i<240;i+=10) {
      whatColor = setColor(i/10);
-     strip.setPixelColor(i/5, whatColor.r,whatColor.g ,whatColor.b);
+     strip.setPixelColor(i/10, whatColor.r,whatColor.g ,whatColor.b);
    }
    
    delay(100);
@@ -397,7 +398,7 @@ void showClock() {
   rHour = (readTime/(60*60000))%24; 
   Serial.print(readTime);
   Serial.print(" : ");
-  Serial.print(rHour,DEC);
+  Serial.print(rHour,DEC);                                                                                               
   Serial.print(" : ");
   Serial.print(rMin,DEC);
   Serial.print(" : ");
@@ -444,7 +445,7 @@ color setColor(char whatColor) { //0-23 컬러 정하기
       return wc;
 }
 ledStrip* ledSetting() { //ledStrip 색깔과 start, end 셋팅
-  static ledStrip *led = NULL;
+  
   color whatColor;
   int i;
   if(listCount) { 
@@ -620,7 +621,7 @@ void setWeather() {
            }else {
             weatherSky = Sun;//Sun(53,7); //sky
            }
-           weatherSky = Cloud;
+           //weatherSky = Cloud;
            if(toStringData(&PTY).indexOf("rain")!=-1 || toStringData(&PTY).indexOf("shower")!= -1) {
             weatherPty = Rain;
            } else if(toStringData(&PTY).indexOf("sleet")!=-1 || toStringData(&PTY).indexOf("snow")!=-1) {
@@ -697,21 +698,26 @@ boolean downPosition() { // 도트매트릭스에 눈이나 비가 오는 기능
 boolean leftShift(boolean shiftOnOff) {
   static int    textX   = 0,   
        textMin = (matrixText[0].length()+matrixText[1].length()+1)*-6; // 1번 스케줄(char형)의 사이즈 측정 
+     
   if(!shiftOnOff) {
     
-    matrix.setTextColor(matrix.Color333(5,9,9));
+    matrix.setTextColor(matrix.Color333(led[0].r/70,led[0].g/70,led[0].b/70));
+    //matrix.setTextColor(matrix.Color333(2,1,0));
     matrix.setCursor(textX, 24);
     matrix.print(matrixText[0]);
 
-    matrix.setTextColor(matrix.Color333(9,9,9));
+    matrix.setTextColor(matrix.Color333(led[1].r/70,led[1].g/70,led[1].b/70));
+  //matrix.setTextColor(matrix.Color333(2,1,0));
     matrix.setCursor(textX+matrixText[0].length()*6+1, 24);
     matrix.print(matrixText[1]);
     
   }else {
-    matrix.setTextColor(matrix.Color333(5,9,9));
+    matrix.setTextColor(matrix.Color333(led[0].r/70,led[0].g/70,led[0].b/70));
+    //matrix.setTextColor(matrix.Color333(2,1,0));
     matrix.setCursor(textX, 24);
      matrix.print(matrixText[0]);
-    matrix.setTextColor(matrix.Color333(9,9,9));
+     matrix.setTextColor(matrix.Color333(led[1].r/70,led[1].g/70,led[1].b/70));
+    //matrix.setTextColor(matrix.Color333(3,3,3));
     matrix.setCursor(textX+matrixText[0].length()*6+6, 24);
     matrix.print(matrixText[1]);
   
@@ -722,10 +728,12 @@ boolean leftShift(boolean shiftOnOff) {
     matrix.setCursor(textX+matrixText[0].length()*6+7, 24);
     matrix.print(matrixText[1]);
     
-     matrix.setTextColor(matrix.Color333(5,9,9));
+     matrix.setTextColor(matrix.Color333(led[0].r/70,led[0].g/70,led[0].b/70));
+     //matrix.setTextColor(matrix.Color333(2,1,0));
      matrix.setCursor(textX, 24);
      matrix.print(matrixText[0]);
-    matrix.setTextColor(matrix.Color333(9,9,9));
+     matrix.setTextColor(matrix.Color333(led[1].r/70,led[1].g/70,led[1].b/70));
+    //matrix.setTextColor(matrix.Color333(3,3,3));
     matrix.setCursor(textX+matrixText[0].length()*6+6, 24);
     matrix.print(matrixText[1]);
 
@@ -752,12 +760,12 @@ void Snow(int x, int y) { // 기상효과(눈) 함수
 }
 
 void Cloud() { // 기상효과(구름) 함수
-  matrix.fillCircle(2,4,2,matrix.Color333(1,1,1)); // 구름이 뭉쳐있는 효과를 내기 위하여 흰색
-  matrix.fillCircle(5,2,2,matrix.Color333(1,1,1)); // 원을 연이어 그려서 효과를 낸다.
-  matrix.fillCircle(7,4,2,matrix.Color333(1,1,1));  
-  matrix.fillCircle(56,4,2,matrix.Color333(1,1,1)); // 구름이 뭉쳐있는 효과를 내기 위하여 흰색
-  matrix.fillCircle(59,2,2,matrix.Color333(1,1,1)); // 원을 연이어 그려서 효과를 낸다.
-  matrix.fillCircle(61,4,2,matrix.Color333(1,1,1));  
+     matrix.fillCircle(2,4,2,matrix.Color333(1,1,1)); // 구름이 뭉쳐있는 효과를 내기 위하여 흰색 8
+     matrix.fillCircle(4,2,2,matrix.Color333(1,1,1)); // 원을 연이어 그려서 효과를 낸다.
+     matrix.fillCircle(5,4,2,matrix.Color333(1,1,1));  
+     matrix.fillCircle(58,4,2,matrix.Color333(1,1,1)); // 구름이 뭉쳐있는 효과를 내기 위하여 흰색 9
+     matrix.fillCircle(60,2,2,matrix.Color333(1,1,1)); // 원을 연이어 그려서 효과를 낸다.
+     matrix.fillCircle(62,4,2,matrix.Color333(1,1,1));
 }
 
 void Sun(){ // 기상효과(맑음 또는 해) 함수
@@ -782,15 +790,17 @@ void watch(int hour,int minute){ // 시계함수
   matrix.setTextSize(2);
   matrix.setCursor(8,0); // 시계를 띄울 좌표설정
   matrix.print(tempHour); // 서버에서 받아온 현재시간을 변수화시켜서 출력
-  matrix.setCursor(32,0); // 시계를 띄울 좌표설정
+  //matrix.print("00");
+  matrix.setCursor(33,0); // 시계를 띄울 좌표설정
   matrix.print(tempMin);
+  //matrix.print("00");
   matrix.setTextSize(1);
   
 }
 
 void temp(String temp,String minT,String maxT){ // 현재온도 함수
   matrix.setTextColor(matrix.Color333(3,2,1)); // 온도색상설정
-  matrix.setCursor(8,16); // 현재온도를 띄울 좌표설정
+  matrix.setCursor(10,16); // 현재온도를 띄울 좌표설정
   matrix.print(temp);
   matrix.setCursor(25,16);
   matrix.print(minT+'/'+maxT); // 서버에서 받아온 현재온도를 변수화시켜서 출력

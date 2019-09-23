@@ -91,6 +91,7 @@ typedef struct {
   unsigned char g;
   unsigned char b;
 }color;
+
 color setColor(char);
 int realTimeToLed();
 int listToLed(String);
@@ -397,7 +398,7 @@ void showClock() {
   rHour = (readTime/(60*60000))%24; 
   Serial.print(readTime);
   Serial.print(" : ");
-  Serial.print(rHour,DEC);
+  Serial.print(rHour,DEC);                                                                                               
   Serial.print(" : ");
   Serial.print(rMin,DEC);
   Serial.print(" : ");

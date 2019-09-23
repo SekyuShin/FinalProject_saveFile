@@ -17,13 +17,13 @@
 #define LEDNUM 24                  // 연결된 네오픽셀의 숫자입력
 #define LED_S_BRIGHT 70             // led strip 밝기
 #ifndef STASSID
-//#define STASSID "WIFI_SHIN"
-//#define STAPSK  "s7221191"
+#define STASSID "WIFI_SHIN"
+#define STAPSK  "s7221191"
 //#define STASSID "KT_GiGA_5G_Wave2_6FDC"
 //#define STAPSK  "0fe00zb264"
 
-#define STASSID "Sekyu"
-#define STAPSK  "tlstprb1191"
+//#define STASSID "Sekyu"
+//#define STAPSK  "tlstprb1191"
 #endif
 
 
@@ -48,12 +48,12 @@
 const char* ssid     = STASSID;
 const char* password = STAPSK;
 
-const char* host = "172.16.110.102";
+const char* host = "192.168.0.6";
 //const char* host = "13.125.131.249";
 
 //const uint16_t port = 80;
 const uint16_t port = 3000;
-ESP8266 wifi(Serial3,115200);
+ESP8266 wifi(Serial3,9600);
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LEDNUM, PIN, NEO_GRB + NEO_KHZ800); //////////////////////
 typedef struct { //일정 리스트 구조체
   unsigned char ListArr[3]; //START,END,TEXT
