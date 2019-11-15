@@ -35,6 +35,8 @@ typedef struct {
 String matrixText[2];  //= {"iaewewewewe","helllo"}; // 1번 스케줄 변수 
 //String tmx = "26",tmn = "13",t1h= "16",pty="snow",sky = "m-cloudy"; 
 
+
+String TestString = "15:20:20_1800:20_20.1_6_snow_m-cloudy_16.5&1_201911061500_201911062000_scheduler Test";
 void (*weatherSky)();
 void (*weatherPty)(int,int);
 
@@ -60,11 +62,11 @@ void (*weatherPty)(int,int);
 const char* ssid     = STASSID;
 const char* password = STAPSK;
 
-//const char* host = "192.168.0.6";
-const char* host = "13.125.131.249";
+const char* host = "192.168.213.1";
+//const char* host = "13.125.131.249";
 
-const uint16_t port = 80;
-//const uint16_t port = 3000;
+//const uint16_t port = 80;
+const uint16_t port = 3000;
 
 ESP8266 wifi(Serial3,9600);
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LEDNUM, PIN, NEO_GRB + NEO_KHZ800); //////////////////////
@@ -146,32 +148,9 @@ void setup()
    
    delay(100);
    strip.show();
-    wifi.restart();
-    if(wifi.kick ())
-      Serial.print("esp8266 is alive\r\n");
-    else
-      Serial.print("esp8266 is not alive\r\n");
-      
-    Serial.print("FW Version:");
-    Serial.println(wifi.getVersion().c_str());
- 
-    if (wifi.setOprToStation ()) {
-        Serial.print("to station mode\r\n");
-    } else {
-        Serial.print("to station mode error\r\n");
-    }
- 
-     if (wifi.disableMUX()) {
-        Serial.print("single ok\r\n");
-    } else {
-        Serial.print("single err\r\n");
-    }
-  
    
-   Serial.println("client connect!");
-    while(!wifi.joinAP(ssid, password))Serial.print(".");
-    Serial.print("IP:");
-    Serial.println( wifi.getLocalIP().c_str()); 
+   
+  
     tcpInterface(true);
     
     timeVal = millis();
@@ -240,28 +219,15 @@ void tcpInterface(boolean scheduleOnoff) {
   unsigned char buffer[512] = {0};
   Serial.println("start tcp");
   
-  if(!wifi.createTCP(host, port)){
-    Serial.println("server not found");
-    wifi.createTCP(host, port);
-    if(!wifi.joinAP(ssid, password)) {
-      Serial.print("wifi disconnect");
-      wifi.joinAP(ssid, password);
-    } 
-    if(!wifi.createTCP(host, port)&&!wifi.joinAP(ssid, password)) {
-      return;
-    }
-    
-  }
+  
   
   if(scheduleOnoff) {
     char* str = "Arduino schedule\n";
     Serial.println("sending");
     wifi.send((const uint8_t*)str, strlen(str));
     Serial.println("recv");
-    if(wifi.recv(buffer, sizeof(buffer), 10000)==0) {
-      return ;
-    }
-    data=buffer;
+   
+    data=TestString;
     Serial.println(data);
     
   } else {
@@ -269,10 +235,8 @@ void tcpInterface(boolean scheduleOnoff) {
     Serial.println("sending");
     wifi.send((const uint8_t*)str, strlen(str));
     Serial.println("recv");
-    if(wifi.recv(buffer, sizeof(buffer), 10000)==0) {
-      return ;
-    }
-    data=buffer;
+   
+    data=TestString;
     Serial.println(data);
 
   }
