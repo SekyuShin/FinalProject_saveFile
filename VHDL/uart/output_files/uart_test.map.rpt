@@ -1,0 +1,542 @@
+Analysis & Synthesis report for uart_test
+Wed Nov 21 20:11:47 2018
+Quartus Prime Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. State Machine - |uart_test|lcd_display:lcd_send|lcd:lcd_control|state
+  9. State Machine - |uart_test|UART:UART_inst|uart_rx_state
+ 10. State Machine - |uart_test|UART:UART_inst|uart_tx_state
+ 11. Registers Removed During Synthesis
+ 12. Removed Registers Triggering Further Register Optimizations
+ 13. General Register Statistics
+ 14. Inverted Register Statistics
+ 15. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 16. Parameter Settings for User Entity Instance: UART:UART_inst
+ 17. Port Connectivity Checks: "lcd_display:lcd_send|lcd:lcd_control"
+ 18. Port Connectivity Checks: "lcd_display:lcd_send"
+ 19. Port Connectivity Checks: "UART:UART_inst"
+ 20. Post-Synthesis Netlist Statistics for Top Partition
+ 21. Elapsed Time Per Partition
+ 22. Analysis & Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus Prime License Agreement,
+the Altera MegaCore Function License Agreement, or other 
+applicable license agreement, including, without limitation, 
+that your use is for the sole purpose of programming logic 
+devices manufactured by Altera and sold by Altera or its 
+authorized distributors.  Please refer to the applicable 
+agreement for further details.
+
+
+
++----------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                     ;
++------------------------------------+---------------------------------------------+
+; Analysis & Synthesis Status        ; Successful - Wed Nov 21 20:11:47 2018       ;
+; Quartus Prime Version              ; 15.1.0 Build 185 10/21/2015 SJ Lite Edition ;
+; Revision Name                      ; uart_test                                   ;
+; Top-level Entity Name              ; uart_test                                   ;
+; Family                             ; Cyclone IV E                                ;
+; Total logic elements               ; 74                                          ;
+;     Total combinational functions  ; 66                                          ;
+;     Dedicated logic registers      ; 50                                          ;
+; Total registers                    ; 50                                          ;
+; Total pins                         ; 13                                          ;
+; Total virtual pins                 ; 0                                           ;
+; Total memory bits                  ; 0                                           ;
+; Embedded Multiplier 9-bit elements ; 0                                           ;
+; Total PLLs                         ; 0                                           ;
++------------------------------------+---------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                                        ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                                     ; Setting            ; Default Value      ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                                     ; EP4CE30F23C8       ;                    ;
+; Top-level entity name                                                      ; uart_test          ; uart_test          ;
+; Family name                                                                ; Cyclone IV E       ; Cyclone V          ;
+; Use smart compilation                                                      ; Off                ; Off                ;
+; Enable parallel Assembler and TimeQuest Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                                ; Off                ; Off                ;
+; Restructure Multiplexers                                                   ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                                        ; Off                ; Off                ;
+; Preserve fewer node names                                                  ; On                 ; On                 ;
+; Disable OpenCore Plus hardware evaluation                                  ; Off                ; Off                ;
+; Verilog Version                                                            ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                               ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                                   ; Auto               ; Auto               ;
+; Safe State Machine                                                         ; Off                ; Off                ;
+; Extract Verilog State Machines                                             ; On                 ; On                 ;
+; Extract VHDL State Machines                                                ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                          ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                                 ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                             ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                                    ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                                  ; On                 ; On                 ;
+; Parallel Synthesis                                                         ; On                 ; On                 ;
+; DSP Block Balancing                                                        ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                                         ; On                 ; On                 ;
+; Power-Up Don't Care                                                        ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                               ; Off                ; Off                ;
+; Remove Duplicate Registers                                                 ; On                 ; On                 ;
+; Ignore CARRY Buffers                                                       ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                                     ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                                      ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                                  ; Off                ; Off                ;
+; Ignore LCELL Buffers                                                       ; Off                ; Off                ;
+; Ignore SOFT Buffers                                                        ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                             ; Off                ; Off                ;
+; Optimization Technique                                                     ; Balanced           ; Balanced           ;
+; Carry Chain Length                                                         ; 70                 ; 70                 ;
+; Auto Carry Chains                                                          ; On                 ; On                 ;
+; Auto Open-Drain Pins                                                       ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                                      ; Off                ; Off                ;
+; Auto ROM Replacement                                                       ; On                 ; On                 ;
+; Auto RAM Replacement                                                       ; On                 ; On                 ;
+; Auto DSP Block Replacement                                                 ; On                 ; On                 ;
+; Auto Shift Register Replacement                                            ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                            ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                              ; On                 ; On                 ;
+; Strict RAM Replacement                                                     ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                          ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                                     ; Off                ; Off                ;
+; Auto RAM Block Balancing                                                   ; On                 ; On                 ;
+; Auto RAM to Logic Cell Conversion                                          ; Off                ; Off                ;
+; Auto Resource Sharing                                                      ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                              ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing                        ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                          ; Off                ; Off                ;
+; Timing-Driven Synthesis                                                    ; On                 ; On                 ;
+; Report Parameter Settings                                                  ; On                 ; On                 ;
+; Report Source Assignments                                                  ; On                 ; On                 ;
+; Report Connectivity Checks                                                 ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                                         ; Off                ; Off                ;
+; Synchronization Register Chain Length                                      ; 2                  ; 2                  ;
+; PowerPlay Power Optimization During Synthesis                              ; Normal compilation ; Normal compilation ;
+; HDL message level                                                          ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                            ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report                   ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report                         ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report                  ; 100                ; 100                ;
+; Clock MUX Protection                                                       ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                                ; Off                ; Off                ;
+; Block Design Naming                                                        ; Auto               ; Auto               ;
+; SDC constraint protection                                                  ; Off                ; Off                ;
+; Synthesis Effort                                                           ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal               ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                                       ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                                         ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                                ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                                     ; On                 ; On                 ;
+; Synthesis Seed                                                             ; 1                  ; 1                  ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 4           ;
+; Maximum allowed            ; 4           ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 4           ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processors 2-4         ; < 0.1%      ;
++----------------------------+-------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                  ;
++----------------------------------+-----------------+-----------------+--------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type       ; File Name with Absolute Path                           ; Library ;
++----------------------------------+-----------------+-----------------+--------------------------------------------------------+---------+
+; uart_test.vhd                    ; yes             ; User VHDL File  ; D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd   ;         ;
+; uart.vhd                         ; yes             ; User VHDL File  ; D:/FinalProject/FinalProject/VHDL/uart/uart.vhd        ;         ;
+; timer_50Mhz.vhd                  ; yes             ; User VHDL File  ; D:/FinalProject/FinalProject/VHDL/uart/timer_50Mhz.vhd ;         ;
+; lcd_display.vhd                  ; yes             ; User VHDL File  ; D:/FinalProject/FinalProject/VHDL/uart/lcd_display.vhd ;         ;
+; lcd.vhd                          ; yes             ; User VHDL File  ; D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd         ;         ;
++----------------------------------+-----------------+-----------------+--------------------------------------------------------+---------+
+
+
++------------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary                ;
++---------------------------------------------+--------------+
+; Resource                                    ; Usage        ;
++---------------------------------------------+--------------+
+; Estimated Total logic elements              ; 74           ;
+;                                             ;              ;
+; Total combinational functions               ; 66           ;
+; Logic element usage by number of LUT inputs ;              ;
+;     -- 4 input functions                    ; 27           ;
+;     -- 3 input functions                    ; 12           ;
+;     -- <=2 input functions                  ; 27           ;
+;                                             ;              ;
+; Logic elements by mode                      ;              ;
+;     -- normal mode                          ; 51           ;
+;     -- arithmetic mode                      ; 15           ;
+;                                             ;              ;
+; Total registers                             ; 50           ;
+;     -- Dedicated logic registers            ; 50           ;
+;     -- I/O registers                        ; 0            ;
+;                                             ;              ;
+; I/O pins                                    ; 13           ;
+;                                             ;              ;
+; Embedded Multiplier 9-bit elements          ; 0            ;
+;                                             ;              ;
+; Maximum fan-out node                        ; resetn~input ;
+; Maximum fan-out                             ; 51           ;
+; Total fan-out                               ; 387          ;
+; Average fan-out                             ; 2.73         ;
++---------------------------------------------+--------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                               ;
++----------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------------+--------------+
+; Compilation Hierarchy Node ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name       ; Library Name ;
++----------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------------+--------------+
+; |uart_test                 ; 66 (14)           ; 50 (18)      ; 0           ; 0            ; 0       ; 0         ; 13   ; 0            ; |uart_test                ; work         ;
+;    |UART:UART_inst|        ; 52 (52)           ; 32 (32)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |uart_test|UART:UART_inst ; work         ;
++----------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
+Encoding Type:  One-Hot
++-----------------------------------------------------------------------+
+; State Machine - |uart_test|lcd_display:lcd_send|lcd:lcd_control|state ;
++----------+----------+----------+--------------------------------------+
+; Name     ; state.t2 ; state.t1 ; state.t0                             ;
++----------+----------+----------+--------------------------------------+
+; state.t0 ; 0        ; 0        ; 0                                    ;
+; state.t1 ; 0        ; 1        ; 1                                    ;
+; state.t2 ; 1        ; 0        ; 1                                    ;
++----------+----------+----------+--------------------------------------+
+
+
+Encoding Type:  One-Hot
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |uart_test|UART:UART_inst|uart_rx_state                                                                                                                        ;
++-----------------------------------------+-------------------------------+---------------------------+--------------------------------+-----------------------------------------+
+; Name                                    ; uart_rx_state.rx_get_stop_bit ; uart_rx_state.rx_get_data ; uart_rx_state.rx_get_start_bit ; uart_rx_state.rx_wait_start_synchronise ;
++-----------------------------------------+-------------------------------+---------------------------+--------------------------------+-----------------------------------------+
+; uart_rx_state.rx_wait_start_synchronise ; 0                             ; 0                         ; 0                              ; 0                                       ;
+; uart_rx_state.rx_get_start_bit          ; 0                             ; 0                         ; 1                              ; 1                                       ;
+; uart_rx_state.rx_get_data               ; 0                             ; 1                         ; 0                              ; 1                                       ;
+; uart_rx_state.rx_get_stop_bit           ; 1                             ; 0                         ; 0                              ; 1                                       ;
++-----------------------------------------+-------------------------------+---------------------------+--------------------------------+-----------------------------------------+
+
+
+Encoding Type:  One-Hot
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |uart_test|UART:UART_inst|uart_tx_state                                                                                                                    ;
++------------------------------+-----------------------------+-----------------------------+------------------------------+-----------------------------+--------------------+
+; Name                         ; uart_tx_state.send_stop_bit ; uart_tx_state.transmit_data ; uart_tx_state.send_start_bit ; uart_tx_state.wait_for_tick ; uart_tx_state.idle ;
++------------------------------+-----------------------------+-----------------------------+------------------------------+-----------------------------+--------------------+
+; uart_tx_state.idle           ; 0                           ; 0                           ; 0                            ; 0                           ; 0                  ;
+; uart_tx_state.wait_for_tick  ; 0                           ; 0                           ; 0                            ; 1                           ; 1                  ;
+; uart_tx_state.send_start_bit ; 0                           ; 0                           ; 1                            ; 0                           ; 1                  ;
+; uart_tx_state.transmit_data  ; 0                           ; 1                           ; 0                            ; 0                           ; 1                  ;
+; uart_tx_state.send_stop_bit  ; 1                           ; 0                           ; 0                            ; 0                           ; 1                  ;
++------------------------------+-----------------------------+-----------------------------+------------------------------+-----------------------------+--------------------+
+
+
++----------------------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                                 ;
++-----------------------------------------------------------+----------------------------------------+
+; Register name                                             ; Reason for Removal                     ;
++-----------------------------------------------------------+----------------------------------------+
+; rcv_data[7]~reg0                                          ; Stuck at GND due to stuck port data_in ;
+; rcv_data[6]~reg0                                          ; Stuck at GND due to stuck port data_in ;
+; rcv_data[5]~reg0                                          ; Stuck at GND due to stuck port data_in ;
+; rcv_data[4]~reg0                                          ; Stuck at GND due to stuck port data_in ;
+; rcv_data[3]~reg0                                          ; Stuck at GND due to stuck port data_in ;
+; rcv_data[2]~reg0                                          ; Stuck at GND due to stuck port data_in ;
+; rcv_data[1]~reg0                                          ; Stuck at GND due to stuck port data_in ;
+; rcv_data[0]~reg0                                          ; Stuck at GND due to stuck port data_in ;
+; lcd_display:lcd_send|lcd:lcd_control|internal_count[0..3] ; Lost fanout                            ;
+; timer_50Mhz:clock_change|clock_out                        ; Lost fanout                            ;
+; lcd_display:lcd_send|strobe                               ; Lost fanout                            ;
+; UART:UART_inst|uart_rx_bit                                ; Lost fanout                            ;
+; UART:UART_inst|uart_rx_sync_clock[0..3]                   ; Lost fanout                            ;
+; UART:UART_inst|uart_rx_count[0..2]                        ; Lost fanout                            ;
+; lcd_display:lcd_send|count[0..6]                          ; Lost fanout                            ;
+; timer_50Mhz:clock_change|temp[0..22]                      ; Lost fanout                            ;
+; lcd_display:lcd_send|cnt[0..9]                            ; Lost fanout                            ;
+; lcd_display:lcd_send|busy_pre                             ; Lost fanout                            ;
+; lcd_display:lcd_send|lcd:lcd_control|busy                 ; Lost fanout                            ;
+; UART:UART_inst|uart_rx_filter[0,1]                        ; Lost fanout                            ;
+; lcd_display:lcd_send|lcd:lcd_control|state.t0             ; Lost fanout                            ;
+; lcd_display:lcd_send|lcd:lcd_control|state.t1             ; Lost fanout                            ;
+; lcd_display:lcd_send|lcd:lcd_control|state.t2             ; Lost fanout                            ;
+; UART:UART_inst|uart_rx_state.rx_wait_start_synchronise    ; Lost fanout                            ;
+; UART:UART_inst|uart_rx_state.rx_get_start_bit             ; Lost fanout                            ;
+; UART:UART_inst|uart_rx_state.rx_get_data                  ; Lost fanout                            ;
+; UART:UART_inst|uart_rx_state.rx_get_stop_bit              ; Lost fanout                            ;
+; Total Number of Removed Registers = 73                    ;                                        ;
++-----------------------------------------------------------+----------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                                                                         ;
++--------------------------------------------------------+--------------------+-----------------------------------------------------------------------+
+; Register name                                          ; Reason for Removal ; Registers Removed due to This Register                                ;
++--------------------------------------------------------+--------------------+-----------------------------------------------------------------------+
+; lcd_display:lcd_send|lcd:lcd_control|internal_count[3] ; Lost Fanouts       ; lcd_display:lcd_send|lcd:lcd_control|internal_count[1],               ;
+;                                                        ;                    ; lcd_display:lcd_send|lcd:lcd_control|internal_count[0],               ;
+;                                                        ;                    ; lcd_display:lcd_send|lcd:lcd_control|internal_count[2],               ;
+;                                                        ;                    ; timer_50Mhz:clock_change|clock_out, lcd_display:lcd_send|strobe,      ;
+;                                                        ;                    ; lcd_display:lcd_send|count[1], lcd_display:lcd_send|count[2],         ;
+;                                                        ;                    ; lcd_display:lcd_send|count[3], lcd_display:lcd_send|count[4],         ;
+;                                                        ;                    ; lcd_display:lcd_send|count[5], lcd_display:lcd_send|count[6],         ;
+;                                                        ;                    ; lcd_display:lcd_send|count[0], timer_50Mhz:clock_change|temp[7],      ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[6], timer_50Mhz:clock_change|temp[5],   ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[4], timer_50Mhz:clock_change|temp[3],   ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[2], timer_50Mhz:clock_change|temp[1],   ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[0], timer_50Mhz:clock_change|temp[8],   ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[9], timer_50Mhz:clock_change|temp[10],  ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[11], timer_50Mhz:clock_change|temp[12], ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[13], timer_50Mhz:clock_change|temp[14], ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[15], timer_50Mhz:clock_change|temp[16], ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[17], timer_50Mhz:clock_change|temp[18], ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[19], timer_50Mhz:clock_change|temp[20], ;
+;                                                        ;                    ; timer_50Mhz:clock_change|temp[21], lcd_display:lcd_send|cnt[9],       ;
+;                                                        ;                    ; lcd_display:lcd_send|cnt[8], lcd_display:lcd_send|cnt[7],             ;
+;                                                        ;                    ; lcd_display:lcd_send|cnt[6], lcd_display:lcd_send|cnt[5],             ;
+;                                                        ;                    ; lcd_display:lcd_send|cnt[4], lcd_display:lcd_send|cnt[3],             ;
+;                                                        ;                    ; lcd_display:lcd_send|cnt[2], lcd_display:lcd_send|cnt[1],             ;
+;                                                        ;                    ; lcd_display:lcd_send|cnt[0], lcd_display:lcd_send|busy_pre,           ;
+;                                                        ;                    ; lcd_display:lcd_send|lcd:lcd_control|busy,                            ;
+;                                                        ;                    ; lcd_display:lcd_send|lcd:lcd_control|state.t2                         ;
+; UART:UART_inst|uart_rx_count[2]                        ; Lost Fanouts       ; UART:UART_inst|uart_rx_count[1], UART:UART_inst|uart_rx_count[0],     ;
+;                                                        ;                    ; UART:UART_inst|uart_rx_state.rx_get_data                              ;
+; UART:UART_inst|uart_rx_bit                             ; Lost Fanouts       ; UART:UART_inst|uart_rx_filter[1], UART:UART_inst|uart_rx_filter[0]    ;
+; UART:UART_inst|uart_rx_sync_clock[3]                   ; Lost Fanouts       ; UART:UART_inst|uart_rx_state.rx_wait_start_synchronise                ;
++--------------------------------------------------------+--------------------+-----------------------------------------------------------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 50    ;
+; Number of registers using Synchronous Clear  ; 0     ;
+; Number of registers using Synchronous Load   ; 8     ;
+; Number of registers using Asynchronous Clear ; 49    ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 20    ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++-----------------------------------------------------+
+; Inverted Register Statistics                        ;
++-------------------------------------------+---------+
+; Inverted Register                         ; Fan out ;
++-------------------------------------------+---------+
+; send_char[6]                              ; 3       ;
+; UART:UART_inst|uart_tx_data               ; 3       ;
+; UART:UART_inst|baud_counter[2]            ; 3       ;
+; UART:UART_inst|baud_counter[1]            ; 4       ;
+; UART:UART_inst|baud_counter[0]            ; 5       ;
+; UART:UART_inst|baud_counter[3]            ; 5       ;
+; UART:UART_inst|oversample_baud_counter[8] ; 2       ;
+; UART:UART_inst|oversample_baud_counter[6] ; 2       ;
+; UART:UART_inst|oversample_baud_counter[2] ; 2       ;
+; Total number of inverted registers = 9    ;         ;
++-------------------------------------------+---------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                      ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------+
+; 3:1                ; 7 bits    ; 14 LEs        ; 7 LEs                ; 7 LEs                  ; Yes        ; |uart_test|lcd_display:lcd_send|count[1]        ;
+; 5:1                ; 7 bits    ; 21 LEs        ; 7 LEs                ; 14 LEs                 ; Yes        ; |uart_test|UART:UART_inst|uart_tx_data_block[2] ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------+
+
+
++-------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: UART:UART_inst ;
++-----------------+----------+--------------------------------+
+; Parameter Name  ; Value    ; Type                           ;
++-----------------+----------+--------------------------------+
+; baud_rate       ; 9600     ; Signed Integer                 ;
+; clock_frequency ; 50000000 ; Signed Integer                 ;
++-----------------+----------+--------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Port Connectivity Checks: "lcd_display:lcd_send|lcd:lcd_control" ;
++---------+-------+----------+-------------------------------------+
+; Port    ; Type  ; Severity ; Details                             ;
++---------+-------+----------+-------------------------------------+
+; data[7] ; Input ; Info     ; Stuck at GND                        ;
++---------+-------+----------+-------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "lcd_display:lcd_send"                                                                                                                            ;
++----------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+; Port     ; Type   ; Severity ; Details                                                                                                                                      ;
++----------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+; ls       ; Input  ; Warning  ; Declared by entity but not connected by instance. If a default value exists, it will be used.  Otherwise, the port will be connected to GND. ;
+; e        ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; rs       ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; rw       ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; lcd_data ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
++----------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "UART:UART_inst"                                                                                ;
++-----------------+--------+----------+-------------------------------------------------------------------------------------+
+; Port            ; Type   ; Severity ; Details                                                                             ;
++-----------------+--------+----------+-------------------------------------------------------------------------------------+
+; data_stream_out ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++-----------------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; boundary_port         ; 13                          ;
+; cycloneiii_ff         ; 50                          ;
+;     CLR               ; 22                          ;
+;     CLR SLD           ; 8                           ;
+;     ENA               ; 1                           ;
+;     ENA CLR           ; 19                          ;
+; cycloneiii_lcell_comb ; 67                          ;
+;     arith             ; 15                          ;
+;         2 data inputs ; 15                          ;
+;     normal            ; 52                          ;
+;         0 data inputs ; 1                           ;
+;         1 data inputs ; 8                           ;
+;         2 data inputs ; 4                           ;
+;         3 data inputs ; 12                          ;
+;         4 data inputs ; 27                          ;
+;                       ;                             ;
+; Max LUT depth         ; 4.00                        ;
+; Average LUT depth     ; 1.99                        ;
++-----------------------+-----------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:00     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Analysis & Synthesis
+    Info: Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
+    Info: Processing started: Wed Nov 21 20:11:35 2018
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off uart_test -c uart_test
+Info (20030): Parallel compilation is enabled and will use 4 of the 4 processors detected
+Info (12021): Found 2 design units, including 1 entities, in source file uart_test.vhd
+    Info (12022): Found design unit 1: uart_test-sample File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 16
+    Info (12023): Found entity 1: uart_test File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 6
+Info (12021): Found 2 design units, including 1 entities, in source file uart.vhd
+    Info (12022): Found design unit 1: UART-RTL File: D:/FinalProject/FinalProject/VHDL/uart/uart.vhd Line: 70
+    Info (12023): Found entity 1: UART File: D:/FinalProject/FinalProject/VHDL/uart/uart.vhd Line: 28
+Info (12021): Found 2 design units, including 1 entities, in source file loopback.vhd
+    Info (12022): Found design unit 1: LOOPBACK-RTL File: D:/FinalProject/FinalProject/VHDL/uart/LOOPBACK.vhd Line: 28
+    Info (12023): Found entity 1: LOOPBACK File: D:/FinalProject/FinalProject/VHDL/uart/LOOPBACK.vhd Line: 17
+Info (12021): Found 2 design units, including 1 entities, in source file timer_50mhz.vhd
+    Info (12022): Found design unit 1: timer_50Mhz-Behavioral File: D:/FinalProject/FinalProject/VHDL/uart/timer_50Mhz.vhd Line: 14
+    Info (12023): Found entity 1: timer_50Mhz File: D:/FinalProject/FinalProject/VHDL/uart/timer_50Mhz.vhd Line: 5
+Info (12021): Found 2 design units, including 1 entities, in source file lcd_display.vhd
+    Info (12022): Found design unit 1: lcd_display-sample File: D:/FinalProject/FinalProject/VHDL/uart/lcd_display.vhd Line: 19
+    Info (12023): Found entity 1: lcd_display File: D:/FinalProject/FinalProject/VHDL/uart/lcd_display.vhd Line: 9
+Info (12021): Found 2 design units, including 1 entities, in source file lcd.vhd
+    Info (12022): Found design unit 1: lcd-sample File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 15
+    Info (12023): Found entity 1: lcd File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 5
+Info (12127): Elaborating entity "uart_test" for the top level hierarchy
+Warning (10036): Verilog HDL or VHDL warning at uart_test.vhd(64): object "sc_rcv_data" assigned a value but never read File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 64
+Warning (10492): VHDL Process Statement warning at uart_test.vhd(90): signal "resetn" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 90
+Warning (10492): VHDL Process Statement warning at uart_test.vhd(124): signal "resetn" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 124
+Info (12128): Elaborating entity "UART" for hierarchy "UART:UART_inst" File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 71
+Info (12128): Elaborating entity "timer_50Mhz" for hierarchy "timer_50Mhz:clock_change" File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 84
+Warning (10542): VHDL Variable Declaration warning at timer_50Mhz.vhd(19): used initial value expression for variable "count" because variable was never assigned a value File: D:/FinalProject/FinalProject/VHDL/uart/timer_50Mhz.vhd Line: 19
+Info (12128): Elaborating entity "lcd_display" for hierarchy "lcd_display:lcd_send" File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 85
+Warning (10540): VHDL Signal Declaration warning at lcd_display.vhd(37): used explicit default value for signal "msg" because signal was never assigned a value File: D:/FinalProject/FinalProject/VHDL/uart/lcd_display.vhd Line: 37
+Warning (10492): VHDL Process Statement warning at lcd_display.vhd(97): signal "msg" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: D:/FinalProject/FinalProject/VHDL/uart/lcd_display.vhd Line: 97
+Info (12128): Elaborating entity "lcd" for hierarchy "lcd_display:lcd_send|lcd:lcd_control" File: D:/FinalProject/FinalProject/VHDL/uart/lcd_display.vhd Line: 43
+Warning (10492): VHDL Process Statement warning at lcd.vhd(33): signal "address" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 33
+Warning (10631): VHDL Process Statement warning at lcd.vhd(29): inferring latch(es) for signal or variable "addr", which holds its previous value in one or more paths through the process File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 29
+Info (10041): Inferred latch for "addr[0]" at lcd.vhd(29) File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 29
+Info (10041): Inferred latch for "addr[1]" at lcd.vhd(29) File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 29
+Info (10041): Inferred latch for "addr[2]" at lcd.vhd(29) File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 29
+Info (10041): Inferred latch for "addr[3]" at lcd.vhd(29) File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 29
+Info (10041): Inferred latch for "addr[4]" at lcd.vhd(29) File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 29
+Info (10041): Inferred latch for "addr[5]" at lcd.vhd(29) File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 29
+Info (10041): Inferred latch for "addr[6]" at lcd.vhd(29) File: D:/FinalProject/FinalProject/VHDL/uart/lcd.vhd Line: 29
+Warning (12241): 1 hierarchies have connectivity warnings - see the Connectivity Checks report folder
+Info (13000): Registers with preset signals will power-up high File: D:/FinalProject/FinalProject/VHDL/uart/uart.vhd Line: 193
+Info (13003): DEV_CLRn pin will set, and not reset, register with preset signal due to NOT Gate Push-Back
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "rcv_data[0]" is stuck at GND File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 107
+    Warning (13410): Pin "rcv_data[1]" is stuck at GND File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 107
+    Warning (13410): Pin "rcv_data[2]" is stuck at GND File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 107
+    Warning (13410): Pin "rcv_data[3]" is stuck at GND File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 107
+    Warning (13410): Pin "rcv_data[4]" is stuck at GND File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 107
+    Warning (13410): Pin "rcv_data[5]" is stuck at GND File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 107
+    Warning (13410): Pin "rcv_data[6]" is stuck at GND File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 107
+    Warning (13410): Pin "rcv_data[7]" is stuck at GND File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 107
+Info (286030): Timing-Driven Synthesis is running
+Info (17049): 65 registers lost all their fanouts during netlist optimizations.
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Warning (21074): Design contains 1 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "rx" File: D:/FinalProject/FinalProject/VHDL/uart/uart_test.vhd Line: 10
+Info (21057): Implemented 88 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 4 input pins
+    Info (21059): Implemented 9 output pins
+    Info (21061): Implemented 75 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 20 warnings
+    Info: Peak virtual memory: 4990 megabytes
+    Info: Processing ended: Wed Nov 21 20:11:47 2018
+    Info: Elapsed time: 00:00:12
+    Info: Total CPU time (on all processors): 00:00:23
+
+

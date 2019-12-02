@@ -1,0 +1,135 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.numeric_std.all;
+USE ieee.std_logic_unsigned.all;
+
+ENTITY uart_test IS
+    PORT (	clk_50m			:	IN		std_logic;
+				resetn			:	IN		std_logic;
+				send_req			:	IN		std_logic;		  
+				rx					:	IN		std_logic;
+				tx					:	OUT	std_logic;
+				rcv_data			:	OUT	std_logic_vector(7 downto 0) --ch0
+				);
+END uart_test;
+
+ARCHITECTURE sample OF uart_test IS
+	----------------------------------------------------------------------------
+	-- UART constants
+	----------------------------------------------------------------------------
+	CONSTANT BAUD_RATE              : POSITIVE := 9600;
+	CONSTANT CLOCK_FREQUENCY        : POSITIVE := 50000000;
+    
+	----------------------------------------------------------------------------
+	-- Component declarations
+	----------------------------------------------------------------------------
+	COMPONENT UART IS
+		GENERIC (	BAUD_RATE           : POSITIVE;
+						CLOCK_FREQUENCY     : POSITIVE );
+						
+		PORT (	CLOCK               :   IN      std_logic;
+					RESET               :   IN      std_logic;    
+					DATA_STREAM_IN      :   IN      std_logic_vector(7 downto 0);
+					DATA_STREAM_IN_STB  :   IN      std_logic;
+					DATA_STREAM_IN_ACK  :   OUT     std_logic;
+					DATA_STREAM_OUT     :   OUT     std_logic_vector(7 downto 0);
+					DATA_STREAM_OUT_STB :   OUT     std_logic;
+					DATA_STREAM_OUT_ACK :   IN      std_logic;
+					TX                  :   OUT     std_logic;
+					RX                  :   IN      std_logic );
+		END COMPONENT UART;
+	
+	component timer_50Mhz IS
+		port(clock_in : in  STD_LOGIC;
+           clock_out : out  STD_LOGIC);
+	end component timer_50Mhz;
+	
+	component lcd_display is
+		port(clk, resetn :in std_logic );
+	end component lcd_display;
+	
+	----------------------------------------------------------------------------
+	-- UART signals
+	----------------------------------------------------------------------------
+    SIGNAL clk_1k : std_logic;
+	SIGNAL uart_data_in				: std_logic_vector(7 downto 0);
+	SIGNAL uart_data_out				: std_logic_vector(7 downto 0);
+	SIGNAL uart_data_in_stb			: std_logic;
+	SIGNAL uart_data_in_ack			: std_logic;
+	SIGNAL uart_data_out_stb		: std_logic;
+	SIGNAL uart_data_out_ack		: std_logic;
+	SIGNAL pre_send_req				: std_logic;
+	SIGNAL send_char					: std_logic_vector(7 downto 0);
+	type SC_DATA is array (0 to 15) of std_logic_vector (7 downto 0); --ch1  2d array for lcdtext
+   signal sc_rcv_data : SC_DATA ;														--ch1
+begin
+
+    ----------------------------------------------------------------------------
+    -- UART instantiation
+    ----------------------------------------------------------------------------
+
+	UART_inst : UART
+		GENERIC map (	BAUD_RATE           => BAUD_RATE,
+							CLOCK_FREQUENCY     => CLOCK_FREQUENCY )
+		PORT map	(	CLOCK               => clk_50m,
+						RESET               => resetn,
+						DATA_STREAM_IN      => uart_data_in,
+						DATA_STREAM_IN_STB  => uart_data_in_stb,
+						DATA_STREAM_IN_ACK  => uart_data_in_ack,
+						DATA_STREAM_OUT     => uart_data_out,
+						DATA_STREAM_OUT_STB => uart_data_out_stb,
+						DATA_STREAM_OUT_ACK => uart_data_out_ack,
+						TX                  => tx,
+						RX                  => rx );
+	clock_change : timer_50Mhz PORT MAP(clk_50m,clk_1k);
+	lcd_send : lcd_display PORT MAP(clk_1k, resetn);
+    
+	P_TRANS : process (clk_50m, uart_data_in_ack)
+	
+	begin
+		IF resetn = '0' THEN
+			uart_data_in_stb        <= '0';
+			uart_data_in            <= (others => '0');
+		ELSIF rising_edge(clk_50m) THEN
+			IF send_req = '1' and pre_send_req ='0' THEN
+				uart_data_in_stb    <= '1';
+				uart_data_in <= send_char;
+			ELSIF uart_data_in_ack = '1' THEN
+				uart_data_in_stb    <= '0';
+			END IF;
+			pre_send_req <= send_req;
+		END IF;
+	END process;
+
+	P_RECEIVE : process (clk_50m)
+	variable count : integer range 0 to 15 := 0; -- ch1
+	begin
+		IF rising_edge(clk_50m) THEN
+			IF resetn = '0' THEN
+				uart_data_out_ack <= '0';
+				rcv_data <= (others => '0');
+			ELSE
+				uart_data_out_ack <= '0';
+				IF uart_data_out_stb = '1' THEN
+					uart_data_out_ack   <= '1';
+					sc_rcv_data(count)  <= uart_data_out;
+					count := count + 1;
+				END IF;
+			END IF;
+		END IF;
+	END process;
+
+	next_data : process(clk_50m, send_req)
+	begin
+		IF resetn = '0' THEN
+			send_char <= X"40";
+		ELSIF send_req'EVENT and send_req='1' THEN
+			IF send_char < X"5A" THEN
+				send_char <= send_char + 1;
+			ELSE
+				send_char <= X"41";
+			END IF;
+		END IF;
+	END process;
+
+END sample;

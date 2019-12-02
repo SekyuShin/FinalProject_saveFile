@@ -1,0 +1,25 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "tx",
+					"strict" : false
+				},
+				{
+					"name" : "resetn",
+					"strict" : false
+				},
+				{
+					"name" : "clk_50m",
+					"strict" : false
+				},
+				{
+					"name" : "send_req",
+					"strict" : false
+				}
+			]
+		}
+	]
+}
