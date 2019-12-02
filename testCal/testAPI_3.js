@@ -13,22 +13,36 @@ var summaryText = 'test';
 var startText = '201905010000';
 var endText = '201905312359';
 
+<<<<<<< HEAD
 requestGoogle('list', moment().format('YYYY-MM-DDTHH:mm:ss+09:00'),
                       moment().add(12,'hours').format('YYYY-MM-DDTHH:mm:ss+09:00'))
 console.log(moment().format('YYYY-MM-DDTHH:mm:SS+09:00'));
 // requestGoogle('insert','google2',
 //               moment('201905202000','YYYYMMDDHHmmSS').format('YYYY-MM-DDTHH:mm:SS+09:00'),
 //               moment('201905202100','YYYYMMDDHHmmSS').format('YYYY-MM-DDTHH:mm:SS+09:00'));
+=======
+// requestGoogle('insert','google2',
+//               moment('201905202000','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
+//               moment('201905202100','YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
+>>>>>>> FinalProject_exec/master
 
 // requestGoogle('delete',summaryText,
 //               moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
 //               moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')
   //          );
+<<<<<<< HEAD
 //console.log( moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
 //console.log( moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
 //console.log( moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
 // requestGoogle('list', moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
 //                       moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')  );
+=======
+console.log( moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
+console.log( moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'));
+console.log( moment(new Date()).format('YYYY-MM-DDTHH:mm:SS+09:00'));
+requestGoogle('list', moment(startText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00'),
+                      moment(endText,'YYYYMMDDHHmm').format('YYYY-MM-DDTHH:mm:SS+09:00')  );
+>>>>>>> FinalProject_exec/master
 function requestGoogle(command) {
   fs.readFile('client_secret.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);

@@ -51,6 +51,10 @@ function requestGoogle(command) {
 });
 
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> FinalProject_exec/master
 function authorize(credentials, callback) {
   var arr = [];
   arr.push(arguments[2]);
@@ -84,6 +88,11 @@ function authorize(credentials, callback) {
     });
   });
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> FinalProject_exec/master
 function getAccessToken(oAuth2Client, callback) {
   //인증 절차 추가 필요
   var arr = [];
@@ -129,6 +138,14 @@ function getAccessToken(oAuth2Client, callback) {
   });
   });
 }
+<<<<<<< HEAD
+=======
+
+/**
+ * Lists the next 10 events on the user's primary calendar.
+ * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ */
+>>>>>>> FinalProject_exec/master
 function listEvents(auth,start_t,end_t) {
   return new Promise(function(resolve,reject) {
   list='';
